@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+    "name": "test-ai",
+    "description": "A JIRA virtual assistant for hands free voice commands",
+    "version": "1.0",
+    "action": {
+      "default_popup": "popup.html"
+    },
+    "permissions": ["activeTab", "scripting"],
+    "content_scripts": [{
+      "matches": ["https://beavanjoemathias.atlassian.net/jira/*"],
+      "js": ["contentScript.js"]
+    }]
+}
