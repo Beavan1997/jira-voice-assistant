@@ -6,7 +6,8 @@ import useTextToSpeech from './hooks/useTextToSpeech';
 
 function App() {
 
-  let keywords = ["add", "Add"];
+  let keywords = ['create', 'insert', 'add', 'implement', 'generate', 'compose', 'form', 'formulate', 'setup', 'update', 'set', 'change', 'alter', 'modify', 'edit', 'correct', 'make', "delete", "remove", "scratch", "cross"];
+  const [temp, setTemp] = useState(-1);
 
   const [textInput, setTextInput] = useState('');
 
@@ -34,6 +35,7 @@ function App() {
     return () => { ignore = true; }
   },[]);
 
+
   const getToken = async() =>{
     try{
       const response = await fetch('https://auth.atlassian.com/oauth/token', {
@@ -55,21 +57,54 @@ function App() {
     }
   };
 
-  const TaskToDo = () => {
-    if (transcript.toLowerCase().includes("add")) {
-      addTask()
-    } else if (transcript.toLowerCase().includes("update")) {
-      updateTask()
-    } else if(transcript.toLowerCase().includes("delete")) {
-      deleteTask()
+  useEffect(() => {
+    if (temp >= 0 && temp <= 8) {
+      addTask();
+    } else if (temp > 8 && temp <= 16) {
+      updateTask();
+    } else if (temp > 16) {
+      deleteTask();
     }
-    // else {
-    //   setTextInput("Not Found");
-    // }
+  }, [temp]);
+
+  const matchesSequence = (inputString) => {
+    const match = keywords.findIndex(seq => inputString.toLowerCase().includes(seq.toLowerCase()));
+
+    if (match >= 0 && match <= 20) {
+      setTemp(match);
+    }
+  }
+
+
+  const TaskToDo = () => {
+    matchesSequence(transcript)
   };
 
   const addTask = async () => {
-    let summary = "No Summary";
+    // Logic for creation of ADD payload
+    let summary = 'No Summary'
+    let key = 'No Key';
+    let board = 'HCI board'
+    const summaryIndex = transcript.indexOf("summary");
+    const keyIndex = transcript.indexOf("key");
+    if (summaryIndex !== -1 && keyIndex !== -1) {
+      if (keyIndex < summaryIndex) {
+        key = transcript.substring(keyIndex + "key".length + 1, summaryIndex);
+        summary = transcript.substring(summaryIndex + "summary".length + 1);
+      } else {
+        summary = transcript.substring(summaryIndex + "summary".length + 1, keyIndex);
+        key = transcript.substring(keyIndex + "key".length + 1);
+      }
+    } else if (summaryIndex !== -1) {
+      summary = transcript.substring(summaryIndex + "summary".length + 1);
+    } else if (keyIndex !== -1) {
+      key = transcript.substring(keyIndex + "key".length + 1);
+    }
+    // keywords: summary, key
+
+    setTextInput(`Created task with Summary ${summary} on board ${board}`)
+    speak(`Created task with Summary ${summary} on board ${board} having key ${key}`)
+
     const bodyData = `{
       "fields": {
          "project":
