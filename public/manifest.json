@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-    "name": "test-ai",
+    "name": "JIRA Voice Assistant",
     "description": "A JIRA virtual assistant for hands free voice commands",
     "version": "1.0",
     "action": {
