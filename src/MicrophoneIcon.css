@@ -1,3 +1,4 @@
+
 .container {
     margin-top: 50px;
     display: grid;
@@ -82,3 +83,13 @@
       border-radius: 100%;
     }
   }
+.btn-text {
+    color: white;
+}
+
+.center-div {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
