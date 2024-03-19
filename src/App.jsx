@@ -3,6 +3,8 @@ import './App.css'
 import './index.css'
 import useSpeechToText from './hooks/useSpeechToText'
 import useTextToSpeech from './hooks/useTextToSpeech';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
 
 function App() {
 
@@ -12,14 +14,22 @@ function App() {
 
   const [token, setToken] = useState('');
   const [payload, setPayload] = useState('');
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   const { isListening, transcript, startListening, stopListening } = useSpeechToText({ continuous: true })
 
   const { speak } = useTextToSpeech();
 
   const startStopListening = () => {
+    setIsSpeaking(!isSpeaking);
     isListening ? stopVoiceInput() : startListening()
   }
+  const handleClick1 = () => {
+    setIsSpeaking(!isSpeaking);
+  };
+  const test1 = () => {
+    console.log("found111111111");
+  };
 
   const stopVoiceInput = () => {
     setTextInput(transcript)
@@ -29,28 +39,29 @@ function App() {
   useEffect(() => {
     let ignore = false;
 
-    if (!ignore)  getToken()
+    if (!ignore) getToken()
 
     return () => { ignore = true; }
-  },[]);
+  }, []);
 
-  const getToken = async() =>{
-    try{
+  const getToken = async () => {
+    try {
       const response = await fetch('https://auth.atlassian.com/oauth/token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
-        
+
         },
         body: JSON.stringify({
-          grant_type : 'client_credentials',
-          scope : 'read:jira-work write:jira-work',
-          client_secret : 'ATOANA_bxN82g_BL5T1V2EBg2xckOXnJLpYyNjyjzTSL5nDKGygUknFxsMtgr6tjD7IYC6E6E7A1',
-          client_id : '04xzOLLh3ZUMLkpKi65k2lQve7f9O56G' })
+          grant_type: 'client_credentials',
+          scope: 'read:jira-work write:jira-work',
+          client_secret: 'ATOANA_bxN82g_BL5T1V2EBg2xckOXnJLpYyNjyjzTSL5nDKGygUknFxsMtgr6tjD7IYC6E6E7A1',
+          client_id: '04xzOLLh3ZUMLkpKi65k2lQve7f9O56G'
+        })
       });
       const data = await response.json();
       setToken(data.access_token);
-    } catch(error) {
+    } catch (error) {
       console.error('Error:', error);
     }
   };
@@ -60,7 +71,7 @@ function App() {
       addTask()
     } else if (transcript.toLowerCase().includes("update")) {
       updateTask()
-    } else if(transcript.toLowerCase().includes("delete")) {
+    } else if (transcript.toLowerCase().includes("delete")) {
       deleteTask()
     }
     // else {
@@ -108,7 +119,7 @@ function App() {
       setTemp(error);
     }
   };
-  
+
   const deleteTask = async () => {
     let key = "HCI-12";
     try {
@@ -124,7 +135,7 @@ function App() {
         }
       );
       const data = await response.status;
-      if(data === 204){
+      if (data === 204) {
         speak(`Task with key ${key} is Deleted`);
       } else {
         speak(`The Task with key ${key} was not deleted`);
@@ -133,6 +144,7 @@ function App() {
       setTemp(error);
     }
   };
+
 
   const updateTask = async () => {
     let summary = "Updated Summary";
@@ -183,7 +195,7 @@ function App() {
         textAlign: "center",
       }}
     >
-      <button
+      {/* <button
         onClick={() => {
           startStopListening();
         }}
@@ -192,10 +204,27 @@ function App() {
           color: "white"
         }}>
         {isListening ? 'Stop Listening l' : 'Speak'}
-      </button>
+      </button> */}
+
+      <div className="container">
+        <div className={`sticks-container left ${isSpeaking ? 'speaking' : ''}`}>
+          {isSpeaking && <div className="sticks"></div>}
+          {isSpeaking && <div className="sticks"></div>}
+          {isSpeaking && <div className="sticks"></div>}
+        </div>
+          <FontAwesomeIcon icon={faMicrophone} className={`mic-icon ${isSpeaking ? 'speaking' : ''}`}  onClick={() => {
+          startStopListening();
+        }}/>
+        <div className={`sticks-container right ${isSpeaking ? 'speaking' : ''}`}>
+          {isSpeaking && <div className="sticks"></div>}
+          {isSpeaking && <div className="sticks"></div>}
+          {isSpeaking && <div className="sticks"></div>}
+        </div>
+      </div>
+
       <textarea
         style={{
-          marginTop: '20px',
+          marginTop: '25px',
           width: '100%',
           height: '150px',
           padding: '10px',
