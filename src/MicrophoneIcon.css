@@ -1,0 +1,10 @@
+.btn-text {
+    color: white;
+}
+
+.center-div {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
