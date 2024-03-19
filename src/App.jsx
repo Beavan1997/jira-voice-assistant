@@ -8,7 +8,7 @@ import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
 
 function App() {
 
-  let keywords = ['create', 'insert', 'add', 'implement', 'generate', 'compose', 'form', 'formulate', 'setup', 'update', 'set', 'change', 'alter', 'modify', 'edit', 'correct', 'make', "delete", "remove", "scratch", "cross"];
+  let keywords = ['create', 'insert', 'add', 'implement', 'generate', 'compose', 'form', 'formulate', 'setup', 'update', 'set', 'change', 'alter', 'modify', 'edit', 'correct', 'make', 'move', 'transition', "delete", "remove", "scratch", "cross"];
   const [temp, setTemp] = useState(-1);
 
   const [textInput, setTextInput] = useState('');
@@ -73,7 +73,9 @@ function App() {
       addTask();
     } else if (temp > 8 && temp <= 16) {
       updateTask();
-    } else if (temp > 16) {
+    } else if (temp > 16 && temp <= 18) {
+      transitionTask();
+    } else if (temp > 18) {
       deleteTask();
     }
   }, [temp]);
@@ -92,29 +94,11 @@ function App() {
   };
 
   const addTask = async () => {
-    // Logic for creation of ADD payload
     let summary = 'No Summary'
-    let key = 'No Key';
-    let board = 'HCI board'
     const summaryIndex = transcript.indexOf("summary");
-    const keyIndex = transcript.indexOf("key");
-    if (summaryIndex !== -1 && keyIndex !== -1) {
-      if (keyIndex < summaryIndex) {
-        key = transcript.substring(keyIndex + "key".length + 1, summaryIndex);
-        summary = transcript.substring(summaryIndex + "summary".length + 1);
-      } else {
-        summary = transcript.substring(summaryIndex + "summary".length + 1, keyIndex);
-        key = transcript.substring(keyIndex + "key".length + 1);
-      }
-    } else if (summaryIndex !== -1) {
+    if (summaryIndex !== -1) {
       summary = transcript.substring(summaryIndex + "summary".length + 1);
-    } else if (keyIndex !== -1) {
-      key = transcript.substring(keyIndex + "key".length + 1);
     }
-    // keywords: summary, key
-
-    setTextInput(`Created task with Summary ${summary} on board ${board}`)
-    speak(`Created task with Summary ${summary} on board ${board} having key ${key}`)
 
     const bodyData = `{
       "fields": {
@@ -155,34 +139,24 @@ function App() {
     }
   };
 
-  const deleteTask = async () => {
-    let key = "HCI-12";
-    try {
-      const response = await fetch(
-        `https://api.atlassian.com/ex/jira/f50580bb-1d4c-4d6a-b89a-34f3991cf46f/rest/api/3/issue/${key}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Basic ${btoa(
-              "mathiasbeavan003@gmail.com:ATATT3xFfGF0HuCC_GtUCSUOUt3NEJgoXWsbiOVrc8sngk4UEKNBBJbb7AHz5gQSuYyM9iKWJVq4w9zveEseBcUp-TltNRej_cTf3YGHsUvHMRjX1LFEHKepJDIF5ae4E7ERg53K-z-l_T1N2BD2fVGH54iaRVgSKibo3xB-F337OKKoaEDDGVI=F48546D9"
-            )}`
-          },
-        }
-      );
-      const data = await response.status;
-      if (data === 204) {
-        speak(`Task with key ${key} is Deleted`);
-      } else {
-        speak(`The Task with key ${key} was not deleted`);
-      }
-    } catch (error) {
-      setTemp(error);
-    }
-  };
-
-
   const updateTask = async () => {
-    let summary = "Updated Summary";
+    let summary = 'No Summary'
+    let key = 'No Key';
+    const summaryIndex = transcript.indexOf("summary");
+    const keyIndex = transcript.indexOf("key");
+    if (summaryIndex !== -1 && keyIndex !== -1) {
+      if (keyIndex < summaryIndex) {
+        key = transcript.substring(keyIndex + "key".length + 1, summaryIndex);
+        summary = transcript.substring(summaryIndex + "summary".length + 1);
+      } else {
+        summary = transcript.substring(summaryIndex + "summary".length + 1, keyIndex);
+        key = transcript.substring(keyIndex + "key".length + 1);
+      }
+    } else if (summaryIndex !== -1) {
+      summary = transcript.substring(summaryIndex + "summary".length + 1);
+    } else if (keyIndex !== -1) {
+      key = transcript.substring(keyIndex + "key".length + 1);
+    }
     const bodyData = `{
       "fields": {
          "project":
@@ -197,7 +171,7 @@ function App() {
   }`;
     try {
       const response = await fetch(
-        "https://api.atlassian.com/ex/jira/f50580bb-1d4c-4d6a-b89a-34f3991cf46f/rest/api/3/issue/HCI-14",
+        `https://api.atlassian.com/ex/jira/f50580bb-1d4c-4d6a-b89a-34f3991cf46f/rest/api/3/issue/${key}`,
         {
           method: "PUT",
           headers: {
@@ -215,6 +189,91 @@ function App() {
         speak("The Task is updated");
       } else {
         speak("The Task was not updated");
+      }
+    } catch (error) {
+      setTemp(error);
+    }
+  };
+
+  const transitionTask = async () => {
+    let key = 'No Key';
+    let to = 'No Status';
+    let tocode;
+    const toIndex = transcript.indexOf("to");
+    const keyIndex = transcript.indexOf("key");
+    if (keyIndex !== -1) {
+      key = transcript.substring(keyIndex + "key".length + 1, keyIndex + "key".length + 7).trim();
+    }
+    if (toIndex !== -1) {
+      to = transcript.substring(toIndex + "to".length + 1);
+    }
+    
+    key = key.substring(-1,3)+"-"+key.substring(4);
+
+    if(to.toLowerCase() === "to do"){
+      tocode = 11;
+    } else if(to.toLowerCase() === "in progress"){
+      tocode = 21;
+    } else if(to.toLowerCase() === "done"){
+      tocode = 31;
+    } else {
+      tocode = -1;
+    }
+    const bodyData = `{
+      "transition": {
+        "id": "${tocode}"
+      }
+  }`;
+    try {
+      const response = await fetch(
+        `https://api.atlassian.com/ex/jira/f50580bb-1d4c-4d6a-b89a-34f3991cf46f/rest/api/3/issue/${key}/transitions`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${btoa(
+              "mathiasbeavan003@gmail.com:ATATT3xFfGF0HuCC_GtUCSUOUt3NEJgoXWsbiOVrc8sngk4UEKNBBJbb7AHz5gQSuYyM9iKWJVq4w9zveEseBcUp-TltNRej_cTf3YGHsUvHMRjX1LFEHKepJDIF5ae4E7ERg53K-z-l_T1N2BD2fVGH54iaRVgSKibo3xB-F337OKKoaEDDGVI=F48546D9"
+            )}`,
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: bodyData,
+        }
+      );
+      const stat = await response.status;
+      if (stat == 204) {
+        speak("Transition Successful");
+      } else {
+        speak("Transition Failed");
+      }
+    } catch (error) {
+      setTemp(error);
+    }
+  };
+
+  const deleteTask = async () => {
+    let key = 'No key'
+    const keyIndex = transcript.indexOf("key");
+    if (keyIndex !== -1) {
+      key = transcript.substring(keyIndex + "key".length + 1, keyIndex + "key".length + 7).trim();
+    }
+    key = key.substring(-1,3)+"-"+key.substring(4);
+    try {
+      const response = await fetch(
+        `https://api.atlassian.com/ex/jira/f50580bb-1d4c-4d6a-b89a-34f3991cf46f/rest/api/3/issue/${key}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Basic ${btoa(
+              "mathiasbeavan003@gmail.com:ATATT3xFfGF0HuCC_GtUCSUOUt3NEJgoXWsbiOVrc8sngk4UEKNBBJbb7AHz5gQSuYyM9iKWJVq4w9zveEseBcUp-TltNRej_cTf3YGHsUvHMRjX1LFEHKepJDIF5ae4E7ERg53K-z-l_T1N2BD2fVGH54iaRVgSKibo3xB-F337OKKoaEDDGVI=F48546D9"
+            )}`
+          },
+        }
+      );
+      const data = await response.status;
+      if (data === 204) {
+        speak(`Task with key ${key} is Deleted`);
+      } else {
+        speak(`The Task with key ${key} was not deleted`);
       }
     } catch (error) {
       setTemp(error);
@@ -271,18 +330,6 @@ function App() {
           setTextInput(e.target.value)
         }}
       />
-      <textarea
-        style={{
-          marginTop: '20px',
-          width: '100%',
-          height: '150px',
-          padding: '10px',
-          border: '1px solid #ccc',
-        }}
-        disabled={isListening}
-        value={token}
-      />
-      <textarea name="hello" id="hello" cols="30" rows="10" value={payload} />
     </div>
   );
 }
