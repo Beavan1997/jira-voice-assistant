@@ -28,32 +28,32 @@ function App() {
   }
   useEffect(() => {
     let ignore = false;
-    
-    if (!ignore)  getToken() 
-    
+
+    if (!ignore)  getToken()
+
     return () => { ignore = true; }
-    },[]);
+  },[]);
 
   const getToken = async() =>{
     try{
-    const response = await fetch('https://auth.atlassian.com/oauth/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+      const response = await fetch('https://auth.atlassian.com/oauth/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
         
-      },
-     body: JSON.stringify({ 
-     grant_type : 'client_credentials',
-     scope : 'read:jira-work write:jira-work',
-     client_secret : 'ATOANA_bxN82g_BL5T1V2EBg2xckOXnJLpYyNjyjzTSL5nDKGygUknFxsMtgr6tjD7IYC6E6E7A1',
-     client_id : '04xzOLLh3ZUMLkpKi65k2lQve7f9O56G' })
-    });
-    const data = await response.json();
-    setToken(data.access_token);
-  } catch(error) {
-    console.error('Error:', error);
-  }
-};
+        },
+        body: JSON.stringify({
+          grant_type : 'client_credentials',
+          scope : 'read:jira-work write:jira-work',
+          client_secret : 'ATOANA_bxN82g_BL5T1V2EBg2xckOXnJLpYyNjyjzTSL5nDKGygUknFxsMtgr6tjD7IYC6E6E7A1',
+          client_id : '04xzOLLh3ZUMLkpKi65k2lQve7f9O56G' })
+      });
+      const data = await response.json();
+      setToken(data.access_token);
+    } catch(error) {
+      console.error('Error:', error);
+    }
+  };
 
   const TaskToDo = () => {
     if (transcript.toLowerCase().includes("add")) {
@@ -62,38 +62,91 @@ function App() {
       updateTask()
     } else if(transcript.toLowerCase().includes("delete")) {
       deleteTask()
-    } 
+    }
     // else {
     //   setTextInput("Not Found");
     // }
-  }
+  };
 
-  const addTask = () => {
-    // Logic for creation of ADD payload
-    let summary = 'No Summary'
-    const summaryIndex = transcript.indexOf("summary");
-    if (summaryIndex !== -1) {
-      summary = transcript.substring(summaryIndex + "summary".length + 1)
+  const addTask = async () => {
+    let summary = "No Summary";
+    const bodyData = `{
+      "fields": {
+         "project":
+         {
+            "key": "HCI"
+         },
+         "summary": "${summary}",
+         "issuetype": {
+            "name": "Task"
+         }
+     }
+  }`;
+    try {
+      const response = await fetch(
+        `https://api.atlassian.com/ex/jira/f50580bb-1d4c-4d6a-b89a-34f3991cf46f/rest/api/3/issue/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${btoa(
+              "mathiasbeavan003@gmail.com:ATATT3xFfGF0HuCC_GtUCSUOUt3NEJgoXWsbiOVrc8sngk4UEKNBBJbb7AHz5gQSuYyM9iKWJVq4w9zveEseBcUp-TltNRej_cTf3YGHsUvHMRjX1LFEHKepJDIF5ae4E7ERg53K-z-l_T1N2BD2fVGH54iaRVgSKibo3xB-F337OKKoaEDDGVI=F48546D9"
+            )}`,
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: bodyData,
+        }
+      );
+      const data = await response.json();
+      const stat = await response.status;
+      if (stat === 201) {
+        speak(`Task with key ${data.key} is Created`);
+      } else {
+        speak(`The Task was not created`);
+      }
+    } catch (error) {
+      setTemp(error);
     }
-
-    let str = `{\n"operationName": "BoardCardCreate",\n "query": "\nmutation BoardCardCreate (\n    $boardId: ID!,\n    $cardTransitionId: ID,\n    $rankBeforeCardId: Long,\n    $newCards: [NewCard]!\n    $destinationId: ID,\n) {\n    boardCardCreate(input: {\n        boardId: $boardId,\n        cardTransitionId: $cardTransitionId,\n        rankBeforeCardId: $rankBeforeCardId,\n        newCards: $newCards\n        destinationId: $destinationId\n    }) {\n        newCards {\n            id\n            issue {\n                key\n            }\n        }\n    }\n}","variables": {"boardId": "1","cardTransitionId": null, "rankBeforeCardId": null,"newCards": [ { "assigneeId": null, "fixVersions": [], "issueTypeId": "10001", "labels": [], "parentId": null, "summary": "${summary}" }]}}`
-    setPayload(str);
-    // speak("Shut up bitch");
-    speak(`Created task with Summary ${summary} on board 1`)
-  }
-
-  const updateTask = () => {
-    //Update task logic
-  }
-
-  const deleteTask = () => { 
-    
-  }
+  };
+  
+  const deleteTask = async () => {
+    let key = "HCI-12";
+    try {
+      const response = await fetch(
+        `https://api.atlassian.com/ex/jira/f50580bb-1d4c-4d6a-b89a-34f3991cf46f/rest/api/3/issue/${key}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Basic ${btoa(
+              "mathiasbeavan003@gmail.com:ATATT3xFfGF0HuCC_GtUCSUOUt3NEJgoXWsbiOVrc8sngk4UEKNBBJbb7AHz5gQSuYyM9iKWJVq4w9zveEseBcUp-TltNRej_cTf3YGHsUvHMRjX1LFEHKepJDIF5ae4E7ERg53K-z-l_T1N2BD2fVGH54iaRVgSKibo3xB-F337OKKoaEDDGVI=F48546D9"
+            )}`
+          },
+        }
+      );
+      const data = await response.status;
+      if(data === 204){
+        speak(`Task with key ${key} is Deleted`);
+      } else {
+        speak(`The Task with key ${key} was not deleted`);
+      }
+    } catch (error) {
+      setTemp(error);
+    }
+  };
 
   return (
-    <div style={{ display: 'block', margin: '0 auto', width: '400px', textAlign: 'center' }}>
+    <div
+      style={{
+        display: "block",
+        margin: "0 auto",
+        width: "400px",
+        textAlign: "center",
+      }}
+    >
       <button
-        onClick={() => { startStopListening() }}
+        onClick={() => {
+          startStopListening();
+        }}
         style={{
           backgroundColor: "#008744",
           color: "white"
@@ -114,7 +167,7 @@ function App() {
           setTextInput(e.target.value)
         }}
       />
-       <textarea
+      <textarea
         style={{
           marginTop: '20px',
           width: '100%',
@@ -127,7 +180,7 @@ function App() {
       />
       <textarea name="hello" id="hello" cols="30" rows="10" value={payload} />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
