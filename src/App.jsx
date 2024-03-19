@@ -134,6 +134,46 @@ function App() {
     }
   };
 
+  const updateTask = async () => {
+    let summary = "Updated Summary";
+    const bodyData = `{
+      "fields": {
+         "project":
+         {
+            "key": "HCI"
+         },
+         "summary": "${summary}",
+         "issuetype": {
+            "name": "Task"
+         }
+     }
+  }`;
+    try {
+      const response = await fetch(
+        "https://api.atlassian.com/ex/jira/f50580bb-1d4c-4d6a-b89a-34f3991cf46f/rest/api/3/issue/HCI-14",
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Basic ${btoa(
+              "mathiasbeavan003@gmail.com:ATATT3xFfGF0HuCC_GtUCSUOUt3NEJgoXWsbiOVrc8sngk4UEKNBBJbb7AHz5gQSuYyM9iKWJVq4w9zveEseBcUp-TltNRej_cTf3YGHsUvHMRjX1LFEHKepJDIF5ae4E7ERg53K-z-l_T1N2BD2fVGH54iaRVgSKibo3xB-F337OKKoaEDDGVI=F48546D9"
+            )}`,
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: bodyData,
+        }
+      );
+      const stat = await response.status;
+      if (stat === 200 || stat == 204) {
+        speak("The Task is updated");
+      } else {
+        speak("The Task was not updated");
+      }
+    } catch (error) {
+      setTemp(error);
+    }
+  };
+
   return (
     <div
       style={{
