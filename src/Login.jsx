@@ -1,20 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './Login.css';
 // npm install bootstrap
 
 const Login = () => {
 
-    const [cloudId, setcloudId] = useState('');
-    const [userId, setuserId] = useState('');
-    const [apiToken, setapiToken] = useState('');
+    // const [cloudId, setcloudId] = useState('');
+    // const [userId, setuserId] = useState(''); 
+    // const [apiToken, setapiToken] = useState('');
+    const cloudIdRef = useRef(null);
+    const userIdRef = useRef(null);
+    const apiTokenRef = useRef(null);
 
-    const handleSave = () => {
+    const handleSave = (e) => {
+        e.preventDefault();
+        console.log(userIdRef.current.value +" "+apiTokenRef.current.value+" "+cloudIdRef.current.value);
         chrome.storage.sync.set({
-            'userId': userId,
-            'apiToken': apiToken,
-            'cloudId': cloudId
+            'userId': userIdRef.current.value,
+            'apiToken':apiTokenRef.current.value,
+            'cloudId': cloudIdRef.current.value
         }, function () {
+            e.target.form.reset();
             console.log('Options saved.');
         });
     };
@@ -26,15 +32,15 @@ const Login = () => {
                     <h3>Sign In</h3>
                     <div className='input-group'>
                         <label for="email" className='input-label'>Email</label>
-                        <input type="email" placeholder="Enter Email" className='form-control' value={userId} onChange={(e) => setuserId(e.target.value)} />
+                        <input type="email" placeholder="Enter Email" className='form-control'  ref={userIdRef}  required/>
                     </div>
                     <div className='input-group'>
                         <label for="password" className='input-label'>Password</label>
-                        <input type="password" placeholder="Enter Password" className='form-control' value={apiToken} onChange={(e) => setapiToken(e.target.value)} />
+                        <input type="password" placeholder="Enter Password" className='form-control'  ref={apiTokenRef} required/>
                     </div>
                     <div className='input-group'>
                         <label for="password" className='input-label'>Cloud ID</label>
-                        <input type="password" placeholder="Enter Cloud ID" className='form-control' value={cloudId} onChange={(e) => setcloudId(e.target.value)} />
+                        <input type="password" placeholder="Enter Cloud ID" className='form-control'  ref={cloudIdRef} required/>
                     </div>
                     <div className='checkbox-group'>
                         <input type="checkbox" id="check" />
