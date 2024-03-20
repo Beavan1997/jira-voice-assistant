@@ -42,10 +42,6 @@ const Login = () => {
                         <label for="password" className='input-label alignLabel3'>Cloud ID</label>
                         <input type="password" placeholder="Enter Cloud ID" className='form-control'  ref={cloudIdRef} required/>
                     </div>
-                    <div className='checkbox-group'>
-                        <input type="checkbox" id="check" />
-                        <label for="check" className="checkbox-label">Remember me</label>
-                    </div>
                     <div className="button-group">
                         <button onClick={handleSave} className="btn btn-primary">Sign in</button>
                     </div>
