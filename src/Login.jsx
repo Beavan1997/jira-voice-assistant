@@ -31,15 +31,15 @@ const Login = () => {
                 <form>
                     <h3>Sign In</h3>
                     <div className='input-group'>
-                        <label for="email" className='input-label'>Email</label>
-                        <input type="email" placeholder="Enter Email" className='form-control'  ref={userIdRef}  required/>
+                        <label for="email" className='input-label alignLabel1'>Email</label>
+                        <input type="email" placeholder="Enter Email" className='form-control'  ref={userIdRef}  required/>  
                     </div>
                     <div className='input-group'>
-                        <label for="password" className='input-label'>Password</label>
+                        <label for="password" className='input-label alignLabel2'>Password</label>
                         <input type="password" placeholder="Enter Password" className='form-control'  ref={apiTokenRef} required/>
                     </div>
                     <div className='input-group'>
-                        <label for="password" className='input-label'>Cloud ID</label>
+                        <label for="password" className='input-label alignLabel3'>Cloud ID</label>
                         <input type="password" placeholder="Enter Cloud ID" className='form-control'  ref={cloudIdRef} required/>
                     </div>
                     <div className='checkbox-group'>
