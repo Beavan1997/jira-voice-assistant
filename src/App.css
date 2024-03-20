@@ -103,6 +103,11 @@
   padding-right: 50px;
 }
 
+.login-message {
+  width: 250px;
+  text-align: center;
+}
+
 
 @keyframes fluctuate1 {
   from {

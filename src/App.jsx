@@ -23,6 +23,7 @@ function App() {
   const [userid, setUser] = useState('');
   const [pwd, setPwd] = useState('');
   const [cloud, setCloud] = useState('');
+  const [showMicrophone, setShowMicrophone]= useState(false);
 
   const { isListening, transcript, startListening, stopListening } = useSpeechToText({ continuous: true })
 
@@ -77,6 +78,11 @@ function App() {
 
   useEffect(() => {
     getEnvVars();
+    chrome.storage.sync.get(['cloudId', 'userId', 'apiToken'], (result) => {
+      if (result.userId && result.apiToken && result.cloudId) {
+        setShowMicrophone(true);
+      }
+    });
     if (keywordIndex >= 0 && keywordIndex <= 8) {
       addTask();
     } else if (keywordIndex > 8 && keywordIndex <= 16) {
@@ -375,23 +381,26 @@ function App() {
           {isSpeaking && <div className="sticks"></div>}
           {isSpeaking && <div className="sticks"></div>}
         </div>
-        <FontAwesomeIcon icon={faMicrophone} className={`mic-icon ${isSpeaking ? 'speaking' : ''}`} onClick={() => {
+        {!showMicrophone && <p className='login-message'>Please login inside settings to continue</p>}
+        {showMicrophone && <FontAwesomeIcon icon={faMicrophone} className={`mic-icon ${isSpeaking ? 'speaking' : ''}`} onClick={() => {
           startStopListening();
-        }} />
-        <div className={`sticks-container right ${isSpeaking ? 'speaking' : ''}`}>
+        }} />}
+        {showMicrophone && <div className={`sticks-container right ${isSpeaking ? 'speaking' : ''}`}>
           {isSpeaking && <div className="sticks"></div>}
           {isSpeaking && <div className="sticks"></div>}
           {isSpeaking && <div className="sticks"></div>}
-        </div>
+        </div>}
       </div>
 
       <textarea
         style={{
           marginTop: '25px',
           width: '100%',
-          height: '150px',
+          height: '100px',
           padding: '10px',
-          border: '1px solid #ccc',
+          border: 'none',
+          textAlign: 'center',
+          backgroundColor: 'white',
         }}
         disabled={isListening}
         value={transcript}
