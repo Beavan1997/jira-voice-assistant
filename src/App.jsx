@@ -214,6 +214,23 @@ function App() {
       description = '';
     }
 
+    const descrip = {
+        content: [
+          {
+            content: [
+              {
+                text: "REPSTR",
+                type: "text"
+              }
+            ],
+            type: "paragraph"
+          }
+        ],
+        type: "doc",
+        version: 1
+    }
+    const lab = []
+
     const fields = {
       project: {
         key: "HCI"
@@ -228,11 +245,13 @@ function App() {
     }
 
     if (label !== undefined) {
-      fields.label = label;
+      lab.push(label);
+      fields.labels = lab;
     }
 
     if (description !== undefined) {
-      fields.description = description;
+      descrip.content[0].content[0].text = description;
+      fields.description = descrip;
     }
 
     const bodyData = JSON.stringify({
