@@ -7,17 +7,17 @@ const Login = () => {
 
     const [cloudId, setcloudId] = useState('');
     const [userId, setuserId] = useState('');
-    const [apiToken, setapiToken] = useState('');
+    const [apiToken, setapiToken] = useState('');
 
     const handleSave = () => {
         chrome.storage.sync.set({
             'userId': userId,
-            'apiToken':apiToken,
+            'apiToken': apiToken,
             'cloudId': cloudId
         }, function () {
             console.log('Options saved.');
-        });
-    };
+        });
+    };
 
     return (
         <div className='login-container'>
