@@ -3,7 +3,6 @@ import './MicrophoneModal.css';
 import App from './App';
 
 const MicrophoneModal = ({handleModal}) => {
-
     return (
         <div className="modal">
             <div className="modal-content">
