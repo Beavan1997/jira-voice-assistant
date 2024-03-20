@@ -146,7 +146,7 @@ function App() {
       const data = await response.json();
       const stat = await response.status;
       if (stat === 201) {
-        speak(`Task with key ${data.key} is Created having summary ${summary}`);
+        speak(`Task with key ${data.key} is Created`);
       } else {
         speak(`The Task was not created`);
       }
@@ -440,6 +440,7 @@ function App() {
         disabled={isListening}
         value={apitoken}
         />
+      </div>
     </div>
   );
 }
