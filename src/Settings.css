@@ -1,0 +1,48 @@
+.settings {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 10px; /* Adjust as needed for spacing */
+  }
+  
+  .setting {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .setting label {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .setting input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px; /* Additional spacing for checkbox */
+  }
+  
+  .setting input[type="range"] {
+    width: 100%;
+  }
+  
+  .setting span {
+    margin-left: 10px;
+  }
+  
+  /* Additional styles for a more polished look */
+  .settings h2 {
+    margin-bottom: 15px;
+  }
+  
+  .settings input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    background: #333; /* Adjust thumb color as desired */
+    border-radius: 50%;
+    cursor: pointer;
+  }

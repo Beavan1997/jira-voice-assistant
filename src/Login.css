@@ -1,18 +1,74 @@
-.leftAlign1 {
-    padding-right:80% ;
-}
-.leftAlign2 {
-    padding-right:70% ;
-}
-.leftAlign3 {
-    padding-right:38% ;
-}
-.login-height {
-    height: 400px;
-}
-.login {
-    height: 500px;
-}
-.mb-10{
-    margin-top: 10px;
-}
+/* Style the login container */
+.login-container {
+    display: flex; /* Center the content horizontally */
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Style the login content area */
+  .login-content {
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 400px; /* Set a width for the login content */
+  }
+  
+  /* Style the form heading */
+  .login-content h3 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Style the input groups */
+  .input-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+  
+  /* Style the input labels */
+  .input-label {
+    display: block; /* Make labels appear on separate lines */
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  /* Style the form control input */
+  .form-control {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  
+  /* Style the checkbox group */
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  /* Style the checkbox label */
+  .checkbox-label {
+    margin-left: 5px;
+  }
+  
+  /* Style the button group */
+  .button-group {
+    text-align: center;
+  }
+  
+  /* Style the button */
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    background-color: #007bff; /* Change to your desired button color */
+    color: #fff;
+  }
+  
+  /* Optional style for button hover effect */
+  .btn:hover {
+    background-color: #0069d9;
+  }
+  

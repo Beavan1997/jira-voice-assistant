@@ -4,28 +4,44 @@ import './Login.css';
 // npm install bootstrap
 
 const Login = () => {
-    
+
+    const [cloudId, setcloudId] = useState('');
+    const [userId, setuserId] = useState('');
+    const [apiToken, setapiToken] = useState('');
+
+    const handleSave = () => {
+        chrome.storage.sync.set({
+            'userId': userId,
+            'apiToken':apiToken,
+            'cloudId': cloudId
+        }, function () {
+            console.log('Options saved.');
+        });
+    };
+
     return (
-        <div className='login d-flex justify-content-center align-items-center bg-primary'>
-            <div className='login-height p-5 rounded bg-white'>
+        <div className='login-container'>
+            <div className='login-content'>
                 <form>
                     <h3>Sign In</h3>
-                    <div className='mb-10'>
-                        <label htmlFor="email" className='leftAlign1'>Email</label>
-                        <input type="email" placeholder="Enter Email" className='form-control' />
+                    <div className='input-group'>
+                        <label for="email" className='input-label'>Email</label>
+                        <input type="email" placeholder="Enter Email" className='form-control' value={userId} onChange={(e) => setuserId(e.target.value)} />
                     </div>
-                    <div className='mb-10'>
-                        <label htmlFor="password" className='leftAlign2'>Password</label>
-                        <input type="password" placeholder="Enter Password" className='form-control' />
+                    <div className='input-group'>
+                        <label for="password" className='input-label'>Password</label>
+                        <input type="password" placeholder="Enter Password" className='form-control' value={apiToken} onChange={(e) => setapiToken(e.target.value)} />
                     </div>
-                    <div className='mb-10 leftAlign3' >
+                    <div className='input-group'>
+                        <label for="password" className='input-label'>Cloud ID</label>
+                        <input type="password" placeholder="Enter Cloud ID" className='form-control' value={cloudId} onChange={(e) => setcloudId(e.target.value)} />
+                    </div>
+                    <div className='checkbox-group'>
                         <input type="checkbox" id="check" />
-                        <label htmlFor="check"style={{paddingLeft: '5px'}}>
-                            Remember me
-                        </label>
+                        <label for="check" className="checkbox-label">Remember me</label>
                     </div>
-                    <div className="mb-10 d-grid">
-                        <button className="btn btn-primary">Sign in</button>
+                    <div className="button-group">
+                        <button onClick={handleSave} className="btn btn-primary">Sign in</button>
                     </div>
                 </form>
             </div>

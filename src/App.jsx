@@ -17,9 +17,21 @@ function App() {
   const [payload, setPayload] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
 
+  const [userid, setUser] = useState('');
+  const [pwd, setPwd] = useState('');
+  const [cloud, setCloud] = useState('');
+
   const { isListening, transcript, startListening, stopListening } = useSpeechToText({ continuous: true })
 
   const { speak } = useTextToSpeech();
+
+  const getEnvVars = () => {
+    chrome.storage.sync.get(['cloudId', 'userId', 'apiToken'], function (result) {
+      setCloud(result.cloudId);
+      setUser(result.userId);
+      setPwd(result.apiToken);
+    });
+  }
 
   const startStopListening = () => {
     setIsSpeaking(!isSpeaking);
@@ -37,14 +49,6 @@ function App() {
     TaskToDo()
     stopListening()
   }
-  useEffect(() => {
-    let ignore = false;
-
-    if (!ignore) getToken()
-
-    return () => { ignore = true; }
-  },[]);
-
 
   const getToken = async () => {
     try {
@@ -69,6 +73,7 @@ function App() {
   };
 
   useEffect(() => {
+    getEnvVars();
     if (temp >= 0 && temp <= 8) {
       addTask();
     } else if (temp > 8 && temp <= 16) {
@@ -330,6 +335,42 @@ function App() {
           setTextInput(e.target.value)
         }}
       />
+
+
+      
+      <textarea
+        style={{
+          marginTop: '20px',
+          width: '100%',
+          height: '150px',
+          padding: '10px',
+          border: '1px solid #ccc',
+        }}
+        disabled={isListening}
+        value={userid}
+        />
+        <textarea
+        style={{
+          marginTop: '20px',
+          width: '100%',
+          height: '150px',
+          padding: '10px',
+          border: '1px solid #ccc',
+        }}
+        disabled={isListening}
+        value={cloud}
+        />
+        <textarea
+        style={{
+          marginTop: '20px',
+          width: '100%',
+          height: '150px',
+          padding: '10px',
+          border: '1px solid #ccc',
+        }}
+        disabled={isListening}
+        value={pwd}
+        />
     </div>
   );
 }
