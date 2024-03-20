@@ -19,7 +19,7 @@ function App() {
 
   const [userid, setUser] = useState('');
   const [pwd, setPwd] = useState('');
-  const [cloud, setCloud] = useState('');
+  const [cloud, setCloud] = useState('');
 
   const { isListening, transcript, startListening, stopListening } = useSpeechToText({ continuous: true })
 
@@ -30,8 +30,8 @@ function App() {
       setCloud(result.cloudId);
       setUser(result.userId);
       setPwd(result.apiToken);
-    });
-  }
+    });
+  }
 
   const startStopListening = () => {
     setIsSpeaking(!isSpeaking);
@@ -145,35 +145,96 @@ function App() {
   };
 
   const updateTask = async () => {
-    let summary = 'No Summary'
+    let updateElementKeywords = ['label', 'summary', 'description'];
+
     let key = 'No Key';
-    const summaryIndex = transcript.indexOf("summary");
-    const keyIndex = transcript.indexOf("key");
-    if (summaryIndex !== -1 && keyIndex !== -1) {
-      if (keyIndex < summaryIndex) {
-        key = transcript.substring(keyIndex + "key".length + 1, summaryIndex);
-        summary = transcript.substring(summaryIndex + "summary".length + 1);
-      } else {
-        summary = transcript.substring(summaryIndex + "summary".length + 1, keyIndex);
-        key = transcript.substring(keyIndex + "key".length + 1);
-      }
-    } else if (summaryIndex !== -1) {
-      summary = transcript.substring(summaryIndex + "summary".length + 1);
-    } else if (keyIndex !== -1) {
-      key = transcript.substring(keyIndex + "key".length + 1);
+    let board = 'HCI board';
+    let label = 'No Label';
+    let summary = 'no summary';
+    let description = 'no desc';
+
+    let transcriptCopy = transcript;
+
+    let transcriptEdited1 = transcriptCopy.replace(/\bset \b/g, '');
+
+    const keyIndex = transcriptEdited1.indexOf("key");
+
+    const transcriptElements = transcriptEdited1.split('and ');
+    const jsonMap = new Map();
+
+    const labelIndex = transcriptElements[0].indexOf("label");
+    if (labelIndex > 0) {
+      label = transcriptElements[0].substring(labelIndex + 5);
+      jsonMap["label"] = label;
     }
-    const bodyData = `{
-      "fields": {
-         "project":
-         {
-            "key": "HCI"
-         },
-         "summary": "${summary}",
-         "issuetype": {
-            "name": "Task"
-         }
-     }
-  }`;
+
+    const summaryIndex = transcriptElements[0].indexOf("summary");
+    if (summaryIndex > 0) {
+      summary = transcriptElements[0].substring(summaryIndex + 7);
+      jsonMap["summary"] = summary;
+    }
+
+    const descriptionIndex = transcriptElements[0].indexOf("description");
+    if (descriptionIndex > 0) {
+      description = transcriptElements[0].substring(descriptionIndex + 11);
+      jsonMap["description"] = description;
+    }
+
+    transcriptElements.forEach(item => {
+      let spaceIndex = item.indexOf(' ');
+      let keyword = item.substring(0, spaceIndex);
+      let value = item.substring(spaceIndex + 1);
+      if (updateElementKeywords.includes(keyword)) {
+        jsonMap[keyword] = value;
+      }
+    })
+
+    key = transcriptElements[0].substring(transcriptElements[0].indexOf("key") + 4, transcriptElements[0].indexOf("key") + 10);
+    label = jsonMap.label;
+    if (label == 'undefined') {
+      label = '';
+    }
+    summary = jsonMap.summary;
+    if (summary == 'undefined') {
+      summary = '';
+    }
+    description = jsonMap.description;
+    if (description == 'undefined') {
+      description = '';
+    }
+
+    // Construct the fields object
+    const fields = {
+      project: {
+        key: "HCI"
+      },
+      issuetype: {
+        name: "Task"
+      }
+    };
+
+    // Add summary if defined
+    if (summary !== undefined) {
+      fields.summary = summary;
+    }
+
+    // Add label if defined
+    if (label !== undefined) {
+      fields.label = label;
+    }
+
+    // Add description if defined
+    if (description !== undefined) {
+      fields.description = description;
+    }
+
+    // Construct the body data string
+    const bodyData = JSON.stringify({
+      fields: fields
+    });
+
+    setToken(JSON.stringify(fields));
+
     try {
       const response = await fetch(
         `https://api.atlassian.com/ex/jira/f50580bb-1d4c-4d6a-b89a-34f3991cf46f/rest/api/3/issue/${key}`,
@@ -212,14 +273,14 @@ function App() {
     if (toIndex !== -1) {
       to = transcript.substring(toIndex + "to".length + 1);
     }
-    
-    key = key.substring(-1,3)+"-"+key.substring(4);
 
-    if(to.toLowerCase() === "to do"){
+    key = key.substring(-1, 3) + "-" + key.substring(4);
+
+    if (to.toLowerCase() === "to do") {
       tocode = 11;
-    } else if(to.toLowerCase() === "in progress"){
+    } else if (to.toLowerCase() === "in progress") {
       tocode = 21;
-    } else if(to.toLowerCase() === "done"){
+    } else if (to.toLowerCase() === "done") {
       tocode = 31;
     } else {
       tocode = -1;
@@ -261,7 +322,7 @@ function App() {
     if (keyIndex !== -1) {
       key = transcript.substring(keyIndex + "key".length + 1, keyIndex + "key".length + 7).trim();
     }
-    key = key.substring(-1,3)+"-"+key.substring(4);
+    key = key.substring(-1, 3) + "-" + key.substring(4);
     try {
       const response = await fetch(
         `https://api.atlassian.com/ex/jira/f50580bb-1d4c-4d6a-b89a-34f3991cf46f/rest/api/3/issue/${key}`,
@@ -311,9 +372,9 @@ function App() {
           {isSpeaking && <div className="sticks"></div>}
           {isSpeaking && <div className="sticks"></div>}
         </div>
-          <FontAwesomeIcon icon={faMicrophone} className={`mic-icon ${isSpeaking ? 'speaking' : ''}`}  onClick={() => {
+        <FontAwesomeIcon icon={faMicrophone} className={`mic-icon ${isSpeaking ? 'speaking' : ''}`} onClick={() => {
           startStopListening();
-        }}/>
+        }} />
         <div className={`sticks-container right ${isSpeaking ? 'speaking' : ''}`}>
           {isSpeaking && <div className="sticks"></div>}
           {isSpeaking && <div className="sticks"></div>}
@@ -337,7 +398,7 @@ function App() {
       />
 
 
-      
+
       <textarea
         style={{
           marginTop: '20px',
@@ -348,8 +409,8 @@ function App() {
         }}
         disabled={isListening}
         value={userid}
-        />
-        <textarea
+      />
+      <textarea
         style={{
           marginTop: '20px',
           width: '100%',
@@ -359,8 +420,8 @@ function App() {
         }}
         disabled={isListening}
         value={cloud}
-        />
-        <textarea
+      />
+      <textarea
         style={{
           marginTop: '20px',
           width: '100%',
@@ -370,7 +431,7 @@ function App() {
         }}
         disabled={isListening}
         value={pwd}
-        />
+      />
     </div>
   );
 }
