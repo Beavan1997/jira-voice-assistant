@@ -1,13 +1,16 @@
 /* Style the login container */
 .login-container {
-    display: flex; /* Center the content horizontally */
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
   }
   
   /* Style the login content area */
   .login-content {
+    background-color: #fff;
     padding: 30px;
+    margin: 10px;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     width: 400px; /* Set a width for the login content */
@@ -21,8 +24,6 @@
   
   /* Style the input groups */
   .input-group {
-    display: flex;
-    justify-content: space-between;
     margin-bottom: 15px;
   }
   
@@ -35,6 +36,7 @@
   
   /* Style the form control input */
   .form-control {
+    width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 3px;

@@ -20,9 +20,10 @@ const Login = () => {
             'apiToken':apiTokenRef.current.value,
             'cloudId': cloudIdRef.current.value
         }, function () {
+            e.target.form.reset();
             console.log('Options saved.');
-        });
-    };
+        });
+    };
 
     return (
         <div className='login-container'>
