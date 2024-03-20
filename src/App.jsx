@@ -90,6 +90,7 @@ function App() {
   useEffect(() => {
     getEnvVars();
     chrome.storage.sync.get(['cloudId', 'userId', 'apiToken'], (result) => {
+      console.log(result.userId);
       if (result.userId && result.apiToken && result.cloudId) {
         setShowMicrophone(true);
       }
@@ -399,9 +400,9 @@ function App() {
   return (
     <div
       style={{
-        display: "block",
+        display: "flex",
+        flexDirection: 'column',
         margin: "0 auto",
-        width: "400px",
         textAlign: "center",
       }}
     >
@@ -437,10 +438,12 @@ function App() {
         <textarea
           style={{
             marginTop: '25px',
-            width: '100%',
-            height: '100px',
+            minWidth: '300px',
+            width: '94%',
+            height: '75px',
             padding: '10px',
             border: '0.5 solid',
+            borderRadius: '5px',
             borderColor: '#c2c2c2',
             textAlign: 'center',
             backgroundColor: 'white',
