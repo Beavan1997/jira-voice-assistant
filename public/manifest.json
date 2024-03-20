@@ -4,7 +4,8 @@
     "description": "A JIRA virtual assistant for hands free voice commands",
     "version": "1.0",
     "action": {
-      "default_popup": "popup.html"
+      "default_popup": "popup.html",
+      "default_icon": "microphone.png"
     },
     "permissions": ["activeTab", "scripting", "storage"],
     "content_scripts": [{

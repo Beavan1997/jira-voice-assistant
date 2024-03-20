@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './Login.css';
+import { useNavigate } from 'react-router-dom';
 // npm install bootstrap
 
 const Login = () => {
@@ -8,6 +9,9 @@ const Login = () => {
     // const [cloudId, setcloudId] = useState('');
     // const [userId, setuserId] = useState(''); 
     // const [apiToken, setapiToken] = useState('');
+
+    const navigate = useNavigate();
+
     const cloudIdRef = useRef(null);
     const userIdRef = useRef(null);
     const apiTokenRef = useRef(null);
@@ -23,6 +27,7 @@ const Login = () => {
             e.target.form.reset();
             console.log('Options saved.');
         });
+        navigate('/');
     };
 
     return (
