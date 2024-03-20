@@ -381,57 +381,56 @@ function App() {
           {isSpeaking && <div className="sticks"></div>}
         </div>
       </div>
-
-      <textarea
-        style={{
-          marginTop: '25px',
-          width: '100%',
-          height: '150px',
-          padding: '10px',
-          border: '1px solid #ccc',
-        }}
-        disabled={isListening}
-        value={transcript}
-        onChange={(e) => {
-          setTextInput(e.target.value)
-        }}
-      />
-
-
-
-      <textarea
-        style={{
-          marginTop: '20px',
-          width: '100%',
-          height: '150px',
-          padding: '10px',
-          border: '1px solid #ccc',
-        }}
-        disabled={isListening}
-        value={userid}
-      />
-      <textarea
-        style={{
-          marginTop: '20px',
-          width: '100%',
-          height: '150px',
-          padding: '10px',
-          border: '1px solid #ccc',
-        }}
-        disabled={isListening}
-        value={cloud}
-      />
-      <textarea
-        style={{
-          marginTop: '20px',
-          width: '100%',
-          height: '150px',
-          padding: '10px',
-          border: '1px solid #ccc',
-        }}
-        disabled={isListening}
-        value={pwd}
-      />
+      <div>
+        <textarea
+          style={{
+            marginTop: '25px',
+            width: '100%',
+            height: '150px',
+            padding: '10px',
+            border: '1px solid #ccc',
+            display: 'block',
+          }}
+          disabled={isListening}
+          value={transcript}
+          onChange={(e) => {
+            setTextInput(e.target.value)
+          }}
+        />
+        <textarea
+          style={{
+            marginTop: '20px',
+            width: '100%',
+            height: '150px',
+            padding: '10px',
+            border: '1px solid #ccc',
+          }}
+          disabled={isListening}
+          value={userid}
+        />
+        <textarea
+          style={{
+            marginTop: '20px',
+            width: '100%',
+            height: '150px',
+            padding: '10px',
+            border: '1px solid #ccc',
+          }}
+          disabled={isListening}
+          value={cloud}
+        />
+        <textarea
+          style={{
+            marginTop: '20px',
+            width: '100%',
+            height: '150px',
+            padding: '10px',
+            border: '1px solid #ccc',
+          }}
+          disabled={isListening}
+          value={pwd}
+        />
+      </div>
     </div>
   );
 }
