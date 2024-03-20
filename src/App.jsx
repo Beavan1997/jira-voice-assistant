@@ -9,7 +9,10 @@ import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
 function App() {
 
   let keywords = ['create', 'insert', 'add', 'implement', 'generate', 'compose', 'form', 'formulate', 'setup', 'update', 'set', 'change', 'alter', 'modify', 'edit', 'correct', 'make', 'move', 'transition', "delete", "remove", "scratch", "cross"];
-  const [temp, setTemp] = useState(-1);
+  const [keywordIndex, setKeywordIndex] = useState(-1);
+  const [flag, setFlag] = useState(true);
+
+  const [temp, setTemp] = useState('');
 
   const [textInput, setTextInput] = useState('');
 
@@ -20,6 +23,7 @@ function App() {
   const [userid, setUser] = useState('');
   const [pwd, setPwd] = useState('');
   const [cloud, setCloud] = useState('');
+  const [showMicrophone, setShowMicrophone]= useState(false);
 
   const { isListening, transcript, startListening, stopListening } = useSpeechToText({ continuous: true })
 
@@ -74,22 +78,28 @@ function App() {
 
   useEffect(() => {
     getEnvVars();
-    if (temp >= 0 && temp <= 8) {
+    chrome.storage.sync.get(['cloudId', 'userId', 'apiToken'], (result) => {
+      if (result.userId && result.apiToken && result.cloudId) {
+        setShowMicrophone(true);
+      }
+    });
+    if (keywordIndex >= 0 && keywordIndex <= 8) {
       addTask();
-    } else if (temp > 8 && temp <= 16) {
+    } else if (keywordIndex > 8 && keywordIndex <= 16) {
       updateTask();
-    } else if (temp > 16 && temp <= 18) {
+    } else if (keywordIndex > 16 && keywordIndex <= 18) {
       transitionTask();
-    } else if (temp > 18) {
+    } else if (keywordIndex > 18) {
       deleteTask();
     }
-  }, [temp]);
+  }, [flag]);
 
   const matchesSequence = (inputString) => {
     const match = keywords.findIndex(seq => inputString.toLowerCase().includes(seq.toLowerCase()));
 
     if (match >= 0 && match <= 20) {
-      setTemp(match);
+      setKeywordIndex(match);
+      setFlag(!flag);
     }
   }
 
@@ -135,7 +145,7 @@ function App() {
       const data = await response.json();
       const stat = await response.status;
       if (stat === 201) {
-        speak(`Task with key ${data.key} is Created`);
+        speak(`Task with key ${data.key} is Created having summary ${summary}`);
       } else {
         speak(`The Task was not created`);
       }
@@ -148,7 +158,6 @@ function App() {
     let updateElementKeywords = ['label', 'summary', 'description'];
 
     let key = 'No Key';
-    let board = 'HCI board';
     let label = 'No Label';
     let summary = 'no summary';
     let description = 'no desc';
@@ -372,23 +381,26 @@ function App() {
           {isSpeaking && <div className="sticks"></div>}
           {isSpeaking && <div className="sticks"></div>}
         </div>
-        <FontAwesomeIcon icon={faMicrophone} className={`mic-icon ${isSpeaking ? 'speaking' : ''}`} onClick={() => {
+        {!showMicrophone && <p className='login-message'>Please login inside settings to continue</p>}
+        {showMicrophone && <FontAwesomeIcon icon={faMicrophone} className={`mic-icon ${isSpeaking ? 'speaking' : ''}`} onClick={() => {
           startStopListening();
-        }} />
-        <div className={`sticks-container right ${isSpeaking ? 'speaking' : ''}`}>
+        }} />}
+        {showMicrophone && <div className={`sticks-container right ${isSpeaking ? 'speaking' : ''}`}>
           {isSpeaking && <div className="sticks"></div>}
           {isSpeaking && <div className="sticks"></div>}
           {isSpeaking && <div className="sticks"></div>}
-        </div>
+        </div>}
       </div>
       <div>
         <textarea
           style={{
             marginTop: '25px',
             width: '100%',
-            height: '150px',
+            height: '100px',
             padding: '10px',
-            border: '1px solid #ccc',
+            border: 'none',
+          textAlign: 'center',
+          backgroundColor: 'white',
             display: 'block',
           }}
           disabled={isListening}
