@@ -23,20 +23,30 @@ function App() {
 
   const [userid, setUserid] = useState('');
   const [apitoken, setApitoken] = useState('');
-  const [cloudid, setCloudid] = useState('');
-  const [showMicrophone, setShowMicrophone]= useState(false);
+  const [cloudid, setCloudid] = useState('');
+  const [showMicrophone, setShowMicrophone] = useState(false);
 
   const { isListening, transcript, startListening, stopListening } = useSpeechToText({ continuous: true })
 
   const { speak } = useTextToSpeech();
+
+  const [voiceFeedbackEnabled, setVoiceFeedbackEnabled] = useState(true);
+  const [volume, setVolume] = useState(50);
+
+  useEffect(() => {
+    chrome.storage.sync.get(['voiceFeedbackEnabled', 'volume'], (result) => {
+      setVoiceFeedbackEnabled(result.voiceFeedbackEnabled !== undefined ? result.voiceFeedbackEnabled : true);
+      setVolume(result.volume !== undefined ? result.volume : 50);
+    });
+  }, []);
 
   const getEnvVars = () => {
     chrome.storage.sync.get(['cloudId', 'userId', 'apiToken'], function (result) {
       setCloudid(result.cloudId);
       setUserid(result.userId);
       setApitoken(result.apiToken);
-    });
-  }
+    });
+  }
 
   const startStopListening = () => {
     setIsSpeaking(!isSpeaking);
@@ -146,9 +156,13 @@ function App() {
       const data = await response.json();
       const stat = await response.status;
       if (stat === 201) {
-        speak(`Task with key ${data.key} is Created`);
+        if (voiceFeedbackEnabled) {
+          speak(`Task with key ${data.key} is Created`);
+        }
       } else {
-        speak(`The Task was not created`);
+        if (voiceFeedbackEnabled) {
+          speak(`The Task was not created`);
+        }
       }
     } catch (error) {
       setTemp(error);
@@ -200,7 +214,7 @@ function App() {
     })
 
     key = transcriptElements[0].substring(transcriptElements[0].indexOf("key") + 4, transcriptElements[0].indexOf("key") + 10);
-    key = key.substring(-1,3)+"-"+key.substring(4);
+    key = key.substring(-1, 3) + "-" + key.substring(4);
     label = jsonMap.label;
     if (label == 'undefined') {
       label = '';
@@ -276,9 +290,13 @@ function App() {
       );
       const stat = await response.status;
       if (stat === 200 || stat == 204) {
-        speak("The Task is updated");
+        if (voiceFeedbackEnabled) {
+          speak("The Task is updated");
+        }
       } else {
-        speak("The Task was not updated");
+        if (voiceFeedbackEnabled) {
+          speak("The Task was not updated");
+        }
       }
     } catch (error) {
       setTemp(error);
@@ -297,14 +315,14 @@ function App() {
     if (toIndex !== -1) {
       to = transcript.substring(toIndex + "to".length + 1);
     }
-    
-    key = key.substring(-1,3)+"-"+key.substring(4);
 
-    if(to.toLowerCase() === "to do"){
+    key = key.substring(-1, 3) + "-" + key.substring(4);
+
+    if (to.toLowerCase() === "to do") {
       tocode = 11;
-    } else if(to.toLowerCase() === "in progress"){
+    } else if (to.toLowerCase() === "in progress") {
       tocode = 21;
-    } else if(to.toLowerCase() === "done"){
+    } else if (to.toLowerCase() === "done") {
       tocode = 31;
     } else {
       tocode = -1;
@@ -331,9 +349,13 @@ function App() {
       );
       const stat = await response.status;
       if (stat == 204) {
-        speak("Transition Successful");
+        if (voiceFeedbackEnabled) {
+          speak("Transition Successful");
+        }
       } else {
-        speak("Transition Failed");
+        if (voiceFeedbackEnabled) {
+          speak("Transition Failed");
+        }
       }
     } catch (error) {
       setTemp(error);
@@ -346,7 +368,7 @@ function App() {
     if (keyIndex !== -1) {
       key = transcript.substring(keyIndex + "key".length + 1, keyIndex + "key".length + 7).trim();
     }
-    key = key.substring(-1,3)+"-"+key.substring(4);
+    key = key.substring(-1, 3) + "-" + key.substring(4);
     try {
       const response = await fetch(
         `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${key}`,
@@ -361,9 +383,13 @@ function App() {
       );
       const data = await response.status;
       if (data === 204) {
-        speak(`Task with key ${key} is Deleted`);
+        if (voiceFeedbackEnabled) {
+          speak(`Task with key ${key} is Deleted`);
+        }
       } else {
-        speak(`The Task with key ${key} was not deleted`);
+        if (voiceFeedbackEnabled) {
+          speak(`The Task with key ${key} was not deleted`);
+        }
       }
     } catch (error) {
       setTemp(error);
@@ -414,9 +440,10 @@ function App() {
             width: '100%',
             height: '100px',
             padding: '10px',
-            border: 'none',
-          textAlign: 'center',
-          backgroundColor: 'white',
+            border: '0.5 solid',
+            borderColor: '#c2c2c2',
+            textAlign: 'center',
+            backgroundColor: 'white',
             display: 'block',
           }}
           disabled={isListening}
@@ -425,44 +452,9 @@ function App() {
             setTextInput(e.target.value)
           }}
         />
-      
-      <textarea
-        style={{
-          marginTop: '20px',
-          width: '100%',
-          height: '150px',
-          padding: '10px',
-          border: '1px solid #ccc',
-        }}
-        disabled={isListening}
-        value={token}
-        />
-        <textarea
-        style={{
-          marginTop: '20px',
-          width: '100%',
-          height: '150px',
-          padding: '10px',
-          border: '1px solid #ccc',
-        }}
-        disabled={isListening}
-        value={cloudid}
-        />
-        <textarea
-        style={{
-          marginTop: '20px',
-          width: '100%',
-          height: '150px',
-          padding: '10px',
-          border: '1px solid #ccc',
-        }}
-        disabled={isListening}
-        value={apitoken}
-        />
       </div>
     </div>
   );
 }
 
 export default App;
-
