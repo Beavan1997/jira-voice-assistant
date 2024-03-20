@@ -436,19 +436,7 @@ function App() {
       </div>
       <div>
         <textarea
-          style={{
-            marginTop: '25px',
-            minWidth: '300px',
-            width: '94%',
-            height: '75px',
-            padding: '10px',
-            border: '0.5 solid',
-            borderRadius: '5px',
-            borderColor: '#c2c2c2',
-            textAlign: 'center',
-            backgroundColor: 'white',
-            display: 'block',
-          }}
+          className='transcript-box'
           disabled={isListening}
           value={transcript}
           onChange={(e) => {
