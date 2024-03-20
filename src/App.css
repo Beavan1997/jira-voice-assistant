@@ -108,6 +108,23 @@
   text-align: center;
 }
 
+.transcript-box {
+  margin-top: 25px;
+  min-width: 300px;
+  width: 94%;
+  height: 100px;
+  padding: 10px;
+  border: none;
+  outline: none;
+  text-align: center;
+  background-color: white;
+  display: block;
+}
+
+.transcript-box:focus {
+  border: none;
+}
+
 
 @keyframes fluctuate1 {
   from {
