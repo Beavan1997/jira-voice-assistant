@@ -20,9 +20,10 @@ function App() {
   const [payload, setPayload] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
 
-  const [userid, setUser] = useState('');
-  const [pwd, setPwd] = useState('');
-  const [cloud, setCloud] = useState('');
+
+  const [userid, setUserid] = useState('');
+  const [apitoken, setApitoken] = useState('');
+  const [cloudid, setCloudid] = useState('');
   const [showMicrophone, setShowMicrophone]= useState(false);
 
   const { isListening, transcript, startListening, stopListening } = useSpeechToText({ continuous: true })
@@ -31,11 +32,11 @@ function App() {
 
   const getEnvVars = () => {
     chrome.storage.sync.get(['cloudId', 'userId', 'apiToken'], function (result) {
-      setCloud(result.cloudId);
-      setUser(result.userId);
-      setPwd(result.apiToken);
-    });
-  }
+      setCloudid(result.cloudId);
+      setUserid(result.userId);
+      setApitoken(result.apiToken);
+    });
+  }
 
   const startStopListening = () => {
     setIsSpeaking(!isSpeaking);
@@ -129,12 +130,12 @@ function App() {
   }`;
     try {
       const response = await fetch(
-        `https://api.atlassian.com/ex/jira/f50580bb-1d4c-4d6a-b89a-34f3991cf46f/rest/api/3/issue/`,
+        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/`,
         {
           method: "POST",
           headers: {
             Authorization: `Basic ${btoa(
-              "mathiasbeavan003@gmail.com:ATATT3xFfGF0HuCC_GtUCSUOUt3NEJgoXWsbiOVrc8sngk4UEKNBBJbb7AHz5gQSuYyM9iKWJVq4w9zveEseBcUp-TltNRej_cTf3YGHsUvHMRjX1LFEHKepJDIF5ae4E7ERg53K-z-l_T1N2BD2fVGH54iaRVgSKibo3xB-F337OKKoaEDDGVI=F48546D9"
+              `${userid}:${apitoken}`
             )}`,
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -145,7 +146,7 @@ function App() {
       const data = await response.json();
       const stat = await response.status;
       if (stat === 201) {
-        speak(`Task with key ${data.key} is Created having summary ${summary}`);
+        speak(`Task with key ${data.key} is Created`);
       } else {
         speak(`The Task was not created`);
       }
@@ -199,6 +200,7 @@ function App() {
     })
 
     key = transcriptElements[0].substring(transcriptElements[0].indexOf("key") + 4, transcriptElements[0].indexOf("key") + 10);
+    key = key.substring(-1,3)+"-"+key.substring(4);
     label = jsonMap.label;
     if (label == 'undefined') {
       label = '';
@@ -212,7 +214,6 @@ function App() {
       description = '';
     }
 
-    // Construct the fields object
     const fields = {
       project: {
         key: "HCI"
@@ -222,36 +223,31 @@ function App() {
       }
     };
 
-    // Add summary if defined
     if (summary !== undefined) {
       fields.summary = summary;
     }
 
-    // Add label if defined
     if (label !== undefined) {
       fields.label = label;
     }
 
-    // Add description if defined
     if (description !== undefined) {
       fields.description = description;
     }
 
-    // Construct the body data string
     const bodyData = JSON.stringify({
       fields: fields
     });
 
     setToken(JSON.stringify(fields));
-
     try {
       const response = await fetch(
-        `https://api.atlassian.com/ex/jira/f50580bb-1d4c-4d6a-b89a-34f3991cf46f/rest/api/3/issue/${key}`,
+        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${key}`,
         {
           method: "PUT",
           headers: {
             Authorization: `Basic ${btoa(
-              "mathiasbeavan003@gmail.com:ATATT3xFfGF0HuCC_GtUCSUOUt3NEJgoXWsbiOVrc8sngk4UEKNBBJbb7AHz5gQSuYyM9iKWJVq4w9zveEseBcUp-TltNRej_cTf3YGHsUvHMRjX1LFEHKepJDIF5ae4E7ERg53K-z-l_T1N2BD2fVGH54iaRVgSKibo3xB-F337OKKoaEDDGVI=F48546D9"
+              `${userid}:${apitoken}`
             )}`,
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -282,14 +278,14 @@ function App() {
     if (toIndex !== -1) {
       to = transcript.substring(toIndex + "to".length + 1);
     }
+    
+    key = key.substring(-1,3)+"-"+key.substring(4);
 
-    key = key.substring(-1, 3) + "-" + key.substring(4);
-
-    if (to.toLowerCase() === "to do") {
+    if(to.toLowerCase() === "to do"){
       tocode = 11;
-    } else if (to.toLowerCase() === "in progress") {
+    } else if(to.toLowerCase() === "in progress"){
       tocode = 21;
-    } else if (to.toLowerCase() === "done") {
+    } else if(to.toLowerCase() === "done"){
       tocode = 31;
     } else {
       tocode = -1;
@@ -301,12 +297,12 @@ function App() {
   }`;
     try {
       const response = await fetch(
-        `https://api.atlassian.com/ex/jira/f50580bb-1d4c-4d6a-b89a-34f3991cf46f/rest/api/3/issue/${key}/transitions`,
+        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${key}/transitions`,
         {
           method: "POST",
           headers: {
             Authorization: `Basic ${btoa(
-              "mathiasbeavan003@gmail.com:ATATT3xFfGF0HuCC_GtUCSUOUt3NEJgoXWsbiOVrc8sngk4UEKNBBJbb7AHz5gQSuYyM9iKWJVq4w9zveEseBcUp-TltNRej_cTf3YGHsUvHMRjX1LFEHKepJDIF5ae4E7ERg53K-z-l_T1N2BD2fVGH54iaRVgSKibo3xB-F337OKKoaEDDGVI=F48546D9"
+              `${userid}:${apitoken}`
             )}`,
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -331,15 +327,15 @@ function App() {
     if (keyIndex !== -1) {
       key = transcript.substring(keyIndex + "key".length + 1, keyIndex + "key".length + 7).trim();
     }
-    key = key.substring(-1, 3) + "-" + key.substring(4);
+    key = key.substring(-1,3)+"-"+key.substring(4);
     try {
       const response = await fetch(
-        `https://api.atlassian.com/ex/jira/f50580bb-1d4c-4d6a-b89a-34f3991cf46f/rest/api/3/issue/${key}`,
+        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${key}`,
         {
           method: "DELETE",
           headers: {
             Authorization: `Basic ${btoa(
-              "mathiasbeavan003@gmail.com:ATATT3xFfGF0HuCC_GtUCSUOUt3NEJgoXWsbiOVrc8sngk4UEKNBBJbb7AHz5gQSuYyM9iKWJVq4w9zveEseBcUp-TltNRej_cTf3YGHsUvHMRjX1LFEHKepJDIF5ae4E7ERg53K-z-l_T1N2BD2fVGH54iaRVgSKibo3xB-F337OKKoaEDDGVI=F48546D9"
+              `${userid}:${apitoken}`
             )}`
           },
         }
@@ -381,6 +377,7 @@ function App() {
           {isSpeaking && <div className="sticks"></div>}
           {isSpeaking && <div className="sticks"></div>}
         </div>
+
         {!showMicrophone && <p className='login-message'>Please login inside settings to continue</p>}
         {showMicrophone && <FontAwesomeIcon icon={faMicrophone} className={`mic-icon ${isSpeaking ? 'speaking' : ''}`} onClick={() => {
           startStopListening();
@@ -410,42 +407,44 @@ function App() {
             setTextInput(e.target.value)
           }}
         />
-        <textarea
-          style={{
-            marginTop: '20px',
-            width: '100%',
-            height: '150px',
-            padding: '10px',
-            border: '1px solid #ccc',
-          }}
-          disabled={isListening}
-          value={userid}
+      
+      <textarea
+        style={{
+          marginTop: '20px',
+          width: '100%',
+          height: '150px',
+          padding: '10px',
+          border: '1px solid #ccc',
+        }}
+        disabled={isListening}
+        value={token}
         />
         <textarea
-          style={{
-            marginTop: '20px',
-            width: '100%',
-            height: '150px',
-            padding: '10px',
-            border: '1px solid #ccc',
-          }}
-          disabled={isListening}
-          value={cloud}
+        style={{
+          marginTop: '20px',
+          width: '100%',
+          height: '150px',
+          padding: '10px',
+          border: '1px solid #ccc',
+        }}
+        disabled={isListening}
+        value={cloudid}
         />
         <textarea
-          style={{
-            marginTop: '20px',
-            width: '100%',
-            height: '150px',
-            padding: '10px',
-            border: '1px solid #ccc',
-          }}
-          disabled={isListening}
-          value={pwd}
-        />
+        style={{
+          marginTop: '20px',
+          width: '100%',
+          height: '150px',
+          padding: '10px',
+          border: '1px solid #ccc',
+        }}
+        disabled={isListening}
+        value={apitoken}
+        />
       </div>
     </div>
   );
 }
 
 export default App;
+
