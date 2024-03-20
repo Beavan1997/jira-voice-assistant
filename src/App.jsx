@@ -214,7 +214,7 @@ function App() {
       }
     })
 
-    key = transcriptElements[0].substring(transcriptElements[0].indexOf("key") + 4, transcriptElements[0].indexOf("key") + 10);
+    key = transcriptElements[0].substring(transcriptElements[0].indexOf("key") + 4);
     key = key.substring(-1, 3) + "-" + key.substring(4);
     label = jsonMap.label;
     if (label == 'undefined') {
@@ -311,7 +311,7 @@ function App() {
     const toIndex = transcript.indexOf("to");
     const keyIndex = transcript.indexOf("key");
     if (keyIndex !== -1) {
-      key = transcript.substring(keyIndex + "key".length + 1, keyIndex + "key".length + 7).trim();
+      key = transcript.substring(keyIndex + "key".length + 1, keyIndex + "key".length + 8).trim();
     }
     if (toIndex !== -1) {
       to = transcript.substring(toIndex + "to".length + 1);
@@ -367,7 +367,7 @@ function App() {
     let key = 'No key'
     const keyIndex = transcript.indexOf("key");
     if (keyIndex !== -1) {
-      key = transcript.substring(keyIndex + "key".length + 1, keyIndex + "key".length + 7).trim();
+      key = transcript.substring(keyIndex + "key".length + 1, keyIndex + "key".length + 8).trim();
     }
     key = key.substring(-1, 3) + "-" + key.substring(4);
     try {
@@ -436,7 +436,19 @@ function App() {
       </div>
       <div>
         <textarea
-          className='transcript-box'
+          style={{
+            marginTop: '25px',
+            minWidth: '300px',
+            width: '94%',
+            height: '75px',
+            padding: '10px',
+            border: '0.5 solid',
+            borderRadius: '5px',
+            borderColor: '#c2c2c2',
+            textAlign: 'center',
+            backgroundColor: 'white',
+            display: 'block',
+          }}
           disabled={isListening}
           value={transcript}
           onChange={(e) => {
