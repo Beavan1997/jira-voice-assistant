@@ -46,3 +46,8 @@
     border-radius: 50%;
     cursor: pointer;
   }
+
+  .header {
+    display: flex;
+    gap: 5px;
+  }
