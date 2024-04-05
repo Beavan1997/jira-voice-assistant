@@ -260,7 +260,7 @@ function App() {
     }
 
     if (label !== undefined) {
-      lab.push(label);
+      lab.push(label.trim());
       fields.labels = lab;
     }
 
