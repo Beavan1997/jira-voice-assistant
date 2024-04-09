@@ -5,6 +5,7 @@ import App from "./App";
 import Settings from "./Settings";
 import { IoSettingsSharp } from "react-icons/io5";
 import { IoIosHelp } from "react-icons/io";
+import Help from "./Help";
 
 function Popup() {
     const location = useLocation();
@@ -33,12 +34,13 @@ function Popup() {
                     {showSettingsButton && (
                         <Link to='/settings'><button onClick={handleSettingsClick}><IoSettingsSharp /></button></Link>
                     )}
-                    <button className="help-icon"><IoIosHelp size={28} /></button>
+                    <Link to='/help'><button className="help-icon"><IoIosHelp size={28} /></button></Link>
                 </div>
             </div>
             <Routes>
                 <Route path="/" element={<App />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/help" element={<Help />} />
             </Routes>
         </>
     )
