@@ -3,6 +3,8 @@ import { render } from "react-dom";
 import { HashRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import App from "./App";
 import Settings from "./Settings";
+import { IoSettingsSharp } from "react-icons/io5";
+import { IoIosHelp } from "react-icons/io";
 
 function Popup() {
     const location = useLocation();
@@ -27,9 +29,12 @@ function Popup() {
                     )}
                     <Link to='/'><h2>JIRA Assistant</h2></Link>
                 </div>
-                {showSettingsButton && (
-                    <Link to='/settings'><button onClick={handleSettingsClick}>settings</button></Link>
-                )}
+                <div className="nav-buttons">
+                    {showSettingsButton && (
+                        <Link to='/settings'><button onClick={handleSettingsClick}><IoSettingsSharp /></button></Link>
+                    )}
+                    <button className="help-icon"><IoIosHelp size={28} /></button>
+                </div>
             </div>
             <Routes>
                 <Route path="/" element={<App />} />
