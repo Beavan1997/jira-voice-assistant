@@ -41,10 +41,12 @@ function App() {
   const [volume, setVolume] = useState(50);
 
   useEffect(() => {
-    chrome.storage.sync.get(['voiceFeedbackEnabled', 'volume'], (result) => {
+    chrome.storage.sync.get(['voiceFeedbackEnabled', 'volume', 'taskConfirmationEnabled'], (result) => {
       setVoiceFeedbackEnabled(result.voiceFeedbackEnabled !== undefined ? result.voiceFeedbackEnabled : true);
       setVolume(result.volume !== undefined ? result.volume : 50);
+      setGlobalConfirm(result.taskConfirmationEnabled !== undefined ? result.taskConfirmationEnabled : true);
     });
+    console.log('global confirmation' + globalConfirm);
   }, []);
 
   const getEnvVars = () => {
