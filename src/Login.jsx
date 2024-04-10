@@ -4,7 +4,7 @@ import './Login.css';
 import { useNavigate } from 'react-router-dom';
 // npm install bootstrap
 
-const Login = () => {
+const Login = ({updateUserAndIsLoggedIn}) => {
 
     // const [cloudId, setcloudId] = useState('');
     // const [userId, setuserId] = useState(''); 
@@ -56,12 +56,14 @@ const Login = () => {
             chrome.storage.sync.set({
                 'userId': userIdRef.current.value,
                 'apiToken': apiTokenRef.current.value,
-                'cloudId': cloudIdRef.current.value
+                'cloudId': cloudIdRef.current.value,
+                'isLoggedIn': true
             }, function () {
                 e.target.form.reset();
                 console.log('Options saved.');
             });
             navigate('/');
+            () => updateUserAndIsLoggedIn(userIdRef.current.value, true);
         }
     };
 
