@@ -4,15 +4,15 @@ import Login from "./Login";
 import Logout from "./Logout";
 
 const Settings = () => {
-    const [voiceFeedbackEnabled, setVoiceFeedbackEnabled] = useState(true);
+    const [taskConfirmation, setTaskConfirmation] = useState(true);
     const [volume, setVolume] = useState(50); // Adjust initial volume (0-100)
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userId, setUserId] = useState('');
 
     // Load settings from Chrome storage on initial render
     useEffect(() => {
-        chrome.storage.sync.get(['voiceFeedbackEnabled', 'volume', 'isLoggedIn', 'userId'], (result) => {
-            setVoiceFeedbackEnabled(result.voiceFeedbackEnabled !== undefined ? result.voiceFeedbackEnabled : true);
+        chrome.storage.sync.get(['taskConfirmationEnabled', 'volume', 'isLoggedIn', 'userId'], (result) => {
+            setTaskConfirmation(result.taskConfirmationEnabled !== undefined ? result.taskConfirmationEnabled : true);
             setVolume(result.volume !== undefined ? result.volume : 50);
             setIsLoggedIn(result.isLoggedIn);
             setUserId(result.userId);
@@ -21,9 +21,9 @@ const Settings = () => {
         });
     }, []);
 
-    const toggleVoiceFeedback = () => {
-        setVoiceFeedbackEnabled(!voiceFeedbackEnabled);
-        chrome.storage.sync.set({ voiceFeedbackEnabled: !voiceFeedbackEnabled });
+    const toggleTaskConfirmation = () => {
+        setTaskConfirmation(!taskConfirmation);
+        chrome.storage.sync.set({ taskConfirmationEnabled: !taskConfirmation });
     };
 
     const handleVolumeChange = (event) => {
@@ -53,25 +53,13 @@ const Settings = () => {
             <div className="settings">
                 <h2>Settings</h2>
                 <div className="setting">
-                    <label htmlFor="voiceFeedback">Voice Feedback</label>
+                    <label htmlFor="voiceFeedback">Task Confirmation</label>
                     <input
                         type="checkbox"
                         id="voiceFeedback"
-                        checked={voiceFeedbackEnabled}
-                        onChange={toggleVoiceFeedback}
+                        checked={taskConfirmation}
+                        onChange={toggleTaskConfirmation}
                     />
-                </div>
-                <div className="setting">
-                    <label htmlFor="volume">Volume</label>
-                    <input
-                        type="range"
-                        id="volume"
-                        min="0"
-                        max="100"
-                        value={volume}
-                        onChange={handleVolumeChange}
-                    />
-                    <span>{volume}%</span>
                 </div>
             </div>
         </>
