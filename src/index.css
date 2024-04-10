@@ -59,6 +59,24 @@ button:focus-visible {
   align-items: center;
 }
 
+.help-icon {
+  border: 1px solid #e48a0c;
+  background-color: #ffffff;
+  color: #e48a0c;
+  padding: 0.3em 0.6em;
+}
+.help-icon:hover {
+  background-color: #e48a0c;
+  color: #ffffff;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
