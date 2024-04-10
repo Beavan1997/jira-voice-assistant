@@ -82,30 +82,35 @@ function App() {
       }
     });
 
+    let key = '';
+    let label = '';
+    let summary = '';
+    let description = '';
+    let to = '';
+
     
     //Extract Info and Set confirm flag if Global Confirm is true
-    if(!valSet){
+    if(!valSet || !globalConfirm){
       console.log('In Valset');
       if (keywordIndex >= 0 && keywordIndex <= 8) {
-        let sum = 'No Summary'
+        summary = 'No Sumamry';
         const summaryIndex = transcript.indexOf("summary");
         if (summaryIndex !== -1) {
-          sum = transcript.substring(summaryIndex + "summary".length + 1);
+          summary = transcript.substring(summaryIndex + "summary".length + 1);
         }
-        setSummary(sum);
+        setSummary(summary);
         setValset(true);
         if(globalConfirm){
-          speak(`Are you sure you want to create task with summary ${sum}`);
+          speak(`Are you sure you want to create task with summary ${summary}`);
           setConfirmFlag(true);
         }
         
       } else if (keywordIndex > 8 && keywordIndex <= 16) {
+        key = 'No Key';
+        label = 'No Label';
+        summary = 'no summary';
+        description = 'no desc';
         let updateElementKeywords = ['label', 'summary', 'description'];
-
-        let key = 'No Key';
-        let label = 'No Label';
-        let summary = 'no summary';
-        let description = 'no desc';
 
         let transcriptCopy = transcript;
 
@@ -146,17 +151,23 @@ function App() {
         key = transcriptElements[0].substring(transcriptElements[0].indexOf("key") + 4);
         key = key.substring(-1, 3) + "-" + key.substring(4);
         setKey(key);
+        label = jsonMap.label;
         setLabel(jsonMap.label);
         if (label == 'undefined') {
           setLabel('');
+          label = '';
         }
+        summary = jsonMap.summary;
         setSummary(jsonMap.summary);
         if (summary == 'undefined') {
           setSummary('');
+          summary = '';
         }
+        description = jsonMap.description;
         setDescription(jsonMap.description);
         if (description == 'undefined') {
           setDescription('');
+          description = '';
         }
         setValset(true);
         if(globalConfirm){
@@ -164,8 +175,8 @@ function App() {
           setConfirmFlag(true);
         }
       } else if (keywordIndex > 16 && keywordIndex <= 18) {
-        let key = 'No Key';
-        let to = 'No Status';
+        key = 'No Key';
+        to = 'No Status';
         const toIndex = transcript.indexOf("to");
         const keyIndex = transcript.indexOf("key");
         if (keyIndex !== -1) {
@@ -184,7 +195,7 @@ function App() {
           setConfirmFlag(true);
         }
       } else if (keywordIndex > 18) {
-        let key = 'No key'
+        key = 'No key'
         const keyIndex = transcript.indexOf("key");
         if (keyIndex !== -1) {
           key = transcript.substring(keyIndex + "key".length + 1, keyIndex + "key".length + 8).trim();
@@ -192,6 +203,8 @@ function App() {
         key = key.substring(-1, 3) + "-" + key.substring(4);
         setKey(key);
         setValset(true);
+        console.log('In Valset Under');
+        console.log(key1);
         if(globalConfirm){
           speak(`Are you sure you want to delete task with key ${key}`);
           setConfirmFlag(true);
@@ -199,20 +212,46 @@ function App() {
       }
     }
 
-    if(!globalConfirm || (valSet && !confirmFlag)){
+    if(!globalConfirm){
+      console.log({valSet})
       setValset(!valSet);
       // If confirmed or confirm is off
       if (keywordIndex >= 0 && keywordIndex <= 8) {
         console.log('In add');
+        console.log(summary);
+        
+        addTask(summary);
+      } else if (keywordIndex > 8 && keywordIndex <= 16) {
+        console.log(key)
+        updateTask(key,summary,description,label);
+      } else if (keywordIndex > 16 && keywordIndex <= 18) {
+        console.log(key)
+        console.log(to)
+        transitionTask(key,to);
+      } else if (keywordIndex > 18) {
+        
+        console.log(key)
+        deleteTask(key);
+      }
+    }
+
+    if(globalConfirm && valSet && !confirmFlag){
+      console.log({valSet})
+      setValset(!valSet);
+      // If confirmed or confirm is off
+      if (keywordIndex >= 0 && keywordIndex <= 8) {
+        console.log('In add confirm');
         console.log(summary1);
         
-        addTask();
+        addTask(summary1);
       } else if (keywordIndex > 8 && keywordIndex <= 16) {
-        updateTask();
+        updateTask(key1,summary1,description1,label1);
       } else if (keywordIndex > 16 && keywordIndex <= 18) {
-        transitionTask();
+        transitionTask(key1,toStage1);
       } else if (keywordIndex > 18) {
-        deleteTask();
+        
+        console.log({key1})
+        deleteTask(key1);
       }
     }
 
@@ -250,7 +289,7 @@ function App() {
     matchesSequence(transcript)
   };
 
-  const addTask = async () => {
+  const addTask = async (summary) => {
     
     const bodyData = `{
       "fields": {
@@ -258,7 +297,7 @@ function App() {
          {
             "key": "HCI"
          },
-         "summary": "${summary1}",
+         "summary": "${summary}",
          "issuetype": {
             "name": "Task"
          }
@@ -298,12 +337,12 @@ function App() {
     }
   };
 
-  const updateTask = async () => {
+  const updateTask = async (k,s,d,l) => {
     
-    
-    let sum = summary1;
-    let des = description1;
-    let lb = label1;
+    let keyhere = k;
+    let sum = s;
+    let des = d;
+    let lb = l;
     const descrip = {
         content: [
           {
@@ -350,7 +389,7 @@ function App() {
 
     try {
       const response = await fetch(
-        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${key1}`,
+        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${keyhere}`,
         {
           method: "PUT",
           headers: {
@@ -378,8 +417,9 @@ function App() {
     }
   };
 
-  const transitionTask = async () => {
-    let to=toStage1;
+  const transitionTask = async (k,t) => {
+    let keyhere = k;
+    let to=t;
     let tocode;
     if (to.toLowerCase() === "to do") {
       tocode = 11;
@@ -397,7 +437,7 @@ function App() {
   }`;
     try {
       const response = await fetch(
-        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${key1}/transitions`,
+        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${keyhere}/transitions`,
         {
           method: "POST",
           headers: {
@@ -425,11 +465,11 @@ function App() {
     }
   };
 
-  const deleteTask = async () => {
-    
+  const deleteTask = async (k) => {
+    let keyhere = k;
     try {
       const response = await fetch(
-        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${key1}`,
+        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${keyhere}`,
         {
           method: "DELETE",
           headers: {
