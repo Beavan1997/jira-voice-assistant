@@ -11,22 +11,29 @@ function App() {
   let keywords = ['create', 'insert', 'add', 'implement', 'generate', 'compose', 'form', 'formulate', 'setup', 'update', 'set', 'change', 'alter', 'modify', 'edit', 'correct', 'make', 'move', 'transition', "delete", "remove", "scratch", "cross"];
   const [keywordIndex, setKeywordIndex] = useState(-1);
   const [flag, setFlag] = useState(true);
+  const [otFlag, setOtflag] = useState(true);
+  const [globalConfirm, setGlobalConfirm] = useState(true);
+  const [confirmFlag, setConfirmFlag] = useState(false);
+  const [valSet, setValset] = useState(false);
+
+  const [key1, setKey] = useState('');
+  const [summary1, setSummary] = useState('');
+  const [description1, setDescription] = useState('');
+  const [label1, setLabel] = useState('');
+  const [toStage1, setToStage] = useState('');
 
   const [temp, setTemp] = useState('');
 
   const [textInput, setTextInput] = useState('');
 
-  const [token, setToken] = useState('');
-  const [payload, setPayload] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
-
 
   const [userid, setUserid] = useState('');
   const [apitoken, setApitoken] = useState('');
   const [cloudid, setCloudid] = useState('');
   const [showMicrophone, setShowMicrophone] = useState(false);
 
-  const { isListening, transcript, startListening, stopListening } = useSpeechToText({ continuous: true })
+  const { isListening, transcript, startListening, stopListening, stopListening2 } = useSpeechToText({ continuous: true })
 
   const { speak } = useTextToSpeech();
 
@@ -52,40 +59,17 @@ function App() {
     setIsSpeaking(!isSpeaking);
     isListening ? stopVoiceInput() : startListening()
   }
-  const handleClick1 = () => {
-    setIsSpeaking(!isSpeaking);
-  };
-  const test1 = () => {
-    console.log("found111111111");
-  };
+ 
 
   const stopVoiceInput = () => {
-    setTextInput(transcript)
-    TaskToDo()
     stopListening()
-  }
-
-  const getToken = async () => {
-    try {
-      const response = await fetch('https://auth.atlassian.com/oauth/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-
-        },
-        body: JSON.stringify({
-          grant_type: 'client_credentials',
-          scope: 'read:jira-work write:jira-work',
-          client_secret: 'ATOANA_bxN82g_BL5T1V2EBg2xckOXnJLpYyNjyjzTSL5nDKGygUknFxsMtgr6tjD7IYC6E6E7A1',
-          client_id: '04xzOLLh3ZUMLkpKi65k2lQve7f9O56G'
-        })
-      });
-      const data = await response.json();
-      setToken(data.access_token);
-    } catch (error) {
-      console.error('Error:', error);
+    setTextInput(transcript)
+    if(confirmFlag){
+      setOtflag(!otFlag);
+    } else {
+      TaskToDo()
     }
-  };
+  }
 
   useEffect(() => {
     getEnvVars();
@@ -95,16 +79,160 @@ function App() {
         setShowMicrophone(true);
       }
     });
-    if (keywordIndex >= 0 && keywordIndex <= 8) {
-      addTask();
-    } else if (keywordIndex > 8 && keywordIndex <= 16) {
-      updateTask();
-    } else if (keywordIndex > 16 && keywordIndex <= 18) {
-      transitionTask();
-    } else if (keywordIndex > 18) {
-      deleteTask();
+
+    
+    //Extract Info and Set confirm flag if Global Confirm is true
+    if(!valSet){
+      console.log('In Valset');
+      if (keywordIndex >= 0 && keywordIndex <= 8) {
+        let sum = 'No Summary'
+        const summaryIndex = transcript.indexOf("summary");
+        if (summaryIndex !== -1) {
+          sum = transcript.substring(summaryIndex + "summary".length + 1);
+        }
+        setSummary(sum);
+        setValset(true);
+        if(globalConfirm){
+          speak(`Are you sure you want to create task with summary ${sum}`);
+          setConfirmFlag(true);
+        }
+        
+      } else if (keywordIndex > 8 && keywordIndex <= 16) {
+        let updateElementKeywords = ['label', 'summary', 'description'];
+
+        let key = 'No Key';
+        let label = 'No Label';
+        let summary = 'no summary';
+        let description = 'no desc';
+
+        let transcriptCopy = transcript;
+
+        let transcriptEdited1 = transcriptCopy.replace(/\bset \b/g, '');
+
+        const keyIndex = transcriptEdited1.indexOf("key");
+
+        const transcriptElements = transcriptEdited1.split('and ');
+        const jsonMap = new Map();
+
+        const labelIndex = transcriptElements[0].indexOf("label");
+        if (labelIndex > 0) {
+          label = transcriptElements[0].substring(labelIndex + 5);
+          jsonMap["label"] = label;
+        }
+
+        const summaryIndex = transcriptElements[0].indexOf("summary");
+        if (summaryIndex > 0) {
+          summary = transcriptElements[0].substring(summaryIndex + 7);
+          jsonMap["summary"] = summary;
+        }
+
+        const descriptionIndex = transcriptElements[0].indexOf("description");
+        if (descriptionIndex > 0) {
+          description = transcriptElements[0].substring(descriptionIndex + 11);
+          jsonMap["description"] = description;
+        }
+
+        transcriptElements.forEach(item => {
+          let spaceIndex = item.indexOf(' ');
+          let keyword = item.substring(0, spaceIndex);
+          let value = item.substring(spaceIndex + 1);
+          if (updateElementKeywords.includes(keyword)) {
+            jsonMap[keyword] = value;
+          }
+        })
+
+        key = transcriptElements[0].substring(transcriptElements[0].indexOf("key") + 4);
+        key = key.substring(-1, 3) + "-" + key.substring(4);
+        setKey(key);
+        setLabel(jsonMap.label);
+        if (label == 'undefined') {
+          setLabel('');
+        }
+        setSummary(jsonMap.summary);
+        if (summary == 'undefined') {
+          setSummary('');
+        }
+        setDescription(jsonMap.description);
+        if (description == 'undefined') {
+          setDescription('');
+        }
+        setValset(true);
+        if(globalConfirm){
+          speak(`Are you sure you want to update task with Key ${key}`);
+          setConfirmFlag(true);
+        }
+      } else if (keywordIndex > 16 && keywordIndex <= 18) {
+        let key = 'No Key';
+        let to = 'No Status';
+        const toIndex = transcript.indexOf("to");
+        const keyIndex = transcript.indexOf("key");
+        if (keyIndex !== -1) {
+          key = transcript.substring(keyIndex + "key".length + 1, keyIndex + "key".length + 8).trim();
+        }
+        if (toIndex !== -1) {
+          to = transcript.substring(toIndex + "to".length + 1);
+        }
+
+        key = key.substring(-1, 3) + "-" + key.substring(4);
+        setKey(key);
+        setToStage(to);
+        setValset(true);
+        if(globalConfirm){
+          speak(`Are you sure you want to move task with key ${key} to ${to}`);
+          setConfirmFlag(true);
+        }
+      } else if (keywordIndex > 18) {
+        let key = 'No key'
+        const keyIndex = transcript.indexOf("key");
+        if (keyIndex !== -1) {
+          key = transcript.substring(keyIndex + "key".length + 1, keyIndex + "key".length + 8).trim();
+        }
+        key = key.substring(-1, 3) + "-" + key.substring(4);
+        setKey(key);
+        setValset(true);
+        if(globalConfirm){
+          speak(`Are you sure you want to delete task with key ${key}`);
+          setConfirmFlag(true);
+        }
+      }
     }
+
+    if(valSet && !confirmFlag){
+      setValset(!valSet);
+      // If confirmed or confirm is off
+      if (keywordIndex >= 0 && keywordIndex <= 8) {
+        console.log('In add');
+        console.log(summary1);
+        
+        addTask();
+      } else if (keywordIndex > 8 && keywordIndex <= 16) {
+        updateTask();
+      } else if (keywordIndex > 16 && keywordIndex <= 18) {
+        transitionTask();
+      } else if (keywordIndex > 18) {
+        deleteTask();
+      }
+    }
+
   }, [flag]);
+
+  useEffect(() => {
+    if(confirmFlag && globalConfirm){
+      if (transcript.includes('yes')) {
+        console.log('In yess');
+       setConfirmFlag(false);
+       setFlag(!flag);
+      } else if (transcript.includes('no')) {
+        console.log('In No');
+        setConfirmFlag(false);
+        setValset(!valSet);
+        speak('Operation cancelled.');
+      } else {
+        console.log('In Else');
+        speak('Please say yes or no to confirm or cancel.');
+      }
+    } 
+  }, [otFlag]);
 
   const matchesSequence = (inputString) => {
     const match = keywords.findIndex(seq => inputString.toLowerCase().includes(seq.toLowerCase()));
@@ -121,24 +249,22 @@ function App() {
   };
 
   const addTask = async () => {
-    let summary = 'No Summary'
-    const summaryIndex = transcript.indexOf("summary");
-    if (summaryIndex !== -1) {
-      summary = transcript.substring(summaryIndex + "summary".length + 1);
-    }
-
+    
     const bodyData = `{
       "fields": {
          "project":
          {
             "key": "HCI"
          },
-         "summary": "${summary}",
+         "summary": "${summary1}",
          "issuetype": {
             "name": "Task"
          }
      }
   }`;
+  console.log("2a");
+  //await confirmation(1, summary);
+  console.log("under confirm");
     try {
       const response = await fetch(
         `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/`,
@@ -171,64 +297,11 @@ function App() {
   };
 
   const updateTask = async () => {
-    let updateElementKeywords = ['label', 'summary', 'description'];
-
-    let key = 'No Key';
-    let label = 'No Label';
-    let summary = 'no summary';
-    let description = 'no desc';
-
-    let transcriptCopy = transcript;
-
-    let transcriptEdited1 = transcriptCopy.replace(/\bset \b/g, '');
-
-    const keyIndex = transcriptEdited1.indexOf("key");
-
-    const transcriptElements = transcriptEdited1.split('and ');
-    const jsonMap = new Map();
-
-    const labelIndex = transcriptElements[0].indexOf("label");
-    if (labelIndex > 0) {
-      label = transcriptElements[0].substring(labelIndex + 5);
-      jsonMap["label"] = label;
-    }
-
-    const summaryIndex = transcriptElements[0].indexOf("summary");
-    if (summaryIndex > 0) {
-      summary = transcriptElements[0].substring(summaryIndex + 7);
-      jsonMap["summary"] = summary;
-    }
-
-    const descriptionIndex = transcriptElements[0].indexOf("description");
-    if (descriptionIndex > 0) {
-      description = transcriptElements[0].substring(descriptionIndex + 11);
-      jsonMap["description"] = description;
-    }
-
-    transcriptElements.forEach(item => {
-      let spaceIndex = item.indexOf(' ');
-      let keyword = item.substring(0, spaceIndex);
-      let value = item.substring(spaceIndex + 1);
-      if (updateElementKeywords.includes(keyword)) {
-        jsonMap[keyword] = value;
-      }
-    })
-
-    key = transcriptElements[0].substring(transcriptElements[0].indexOf("key") + 4);
-    key = key.substring(-1, 3) + "-" + key.substring(4);
-    label = jsonMap.label;
-    if (label == 'undefined') {
-      label = '';
-    }
-    summary = jsonMap.summary;
-    if (summary == 'undefined') {
-      summary = '';
-    }
-    description = jsonMap.description;
-    if (description == 'undefined') {
-      description = '';
-    }
-
+    
+    
+    let sum = summary1;
+    let des = description1;
+    let lb = label1;
     const descrip = {
         content: [
           {
@@ -255,17 +328,17 @@ function App() {
       }
     };
 
-    if (summary !== undefined) {
-      fields.summary = summary;
+    if (sum !== undefined) {
+      fields.summary = sum;
     }
 
-    if (label !== undefined) {
-      lab.push(label.trim());
+    if (lb !== undefined) {
+      lab.push(lb.trim());
       fields.labels = lab;
     }
 
-    if (description !== undefined) {
-      descrip.content[0].content[0].text = description;
+    if (des !== undefined) {
+      descrip.content[0].content[0].text = des;
       fields.description = descrip;
     }
 
@@ -273,10 +346,9 @@ function App() {
       fields: fields
     });
 
-    setToken(JSON.stringify(fields));
     try {
       const response = await fetch(
-        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${key}`,
+        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${key1}`,
         {
           method: "PUT",
           headers: {
@@ -305,20 +377,8 @@ function App() {
   };
 
   const transitionTask = async () => {
-    let key = 'No Key';
-    let to = 'No Status';
+    let to=toStage1;
     let tocode;
-    const toIndex = transcript.indexOf("to");
-    const keyIndex = transcript.indexOf("key");
-    if (keyIndex !== -1) {
-      key = transcript.substring(keyIndex + "key".length + 1, keyIndex + "key".length + 8).trim();
-    }
-    if (toIndex !== -1) {
-      to = transcript.substring(toIndex + "to".length + 1);
-    }
-
-    key = key.substring(-1, 3) + "-" + key.substring(4);
-
     if (to.toLowerCase() === "to do") {
       tocode = 11;
     } else if (to.toLowerCase() === "in progress") {
@@ -335,7 +395,7 @@ function App() {
   }`;
     try {
       const response = await fetch(
-        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${key}/transitions`,
+        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${key1}/transitions`,
         {
           method: "POST",
           headers: {
@@ -364,15 +424,10 @@ function App() {
   };
 
   const deleteTask = async () => {
-    let key = 'No key'
-    const keyIndex = transcript.indexOf("key");
-    if (keyIndex !== -1) {
-      key = transcript.substring(keyIndex + "key".length + 1, keyIndex + "key".length + 8).trim();
-    }
-    key = key.substring(-1, 3) + "-" + key.substring(4);
+    
     try {
       const response = await fetch(
-        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${key}`,
+        `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/${key1}`,
         {
           method: "DELETE",
           headers: {
@@ -385,11 +440,11 @@ function App() {
       const data = await response.status;
       if (data === 204) {
         if (voiceFeedbackEnabled) {
-          speak(`Task with key ${key} is Deleted`);
+          speak(`Task with key ${key1} is Deleted`);
         }
       } else {
         if (voiceFeedbackEnabled) {
-          speak(`The Task with key ${key} was not deleted`);
+          speak(`The Task with key ${key1} was not deleted`);
         }
       }
     } catch (error) {
@@ -406,16 +461,6 @@ function App() {
         textAlign: "center",
       }}
     >
-      {/* <button
-        onClick={() => {
-          startStopListening();
-        }}
-        style={{
-          backgroundColor: "#008744",
-          color: "white"
-        }}>
-        {isListening ? 'Stop Listening l' : 'Speak'}
-      </button> */}
 
       <div className="container">
         <div className={`sticks-container left ${isSpeaking ? 'speaking' : ''}`}>
