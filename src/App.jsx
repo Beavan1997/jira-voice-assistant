@@ -199,7 +199,7 @@ function App() {
       }
     }
 
-    if(valSet && !confirmFlag){
+    if(!globalConfirm || (valSet && !confirmFlag)){
       setValset(!valSet);
       // If confirmed or confirm is off
       if (keywordIndex >= 0 && keywordIndex <= 8) {
