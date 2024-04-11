@@ -15,6 +15,7 @@ function App() {
   const [globalConfirm, setGlobalConfirm] = useState(true);
   const [confirmFlag, setConfirmFlag] = useState(false);
   const [valSet, setValset] = useState(false);
+  const [invalid, setInvalid] = useState(false);
 
   const [key1, setKey] = useState('');
   const [summary1, setSummary] = useState('');
@@ -278,9 +279,20 @@ function App() {
   const matchesSequence = (inputString) => {
     const match = keywords.findIndex(seq => inputString.toLowerCase().includes(seq.toLowerCase()));
 
-    if (match >= 0 && match <= 20) {
+    if (match >= 0) {
+      setInvalid(false);
       setKeywordIndex(match);
       setFlag(!flag);
+    } else {
+      if(!invalid){
+        setInvalid(true);
+        console.log(invalid);
+        speak('This was not a valid command, Please try again');
+      } else {
+        console.log(invalid);
+        speak('This was not a valid command, Please check the Help section for more information on valid commands');
+      }
+      
     }
   }
 

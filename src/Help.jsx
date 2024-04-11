@@ -36,20 +36,28 @@ export default function Help() {
             <section>
                 <h4>Supported Actions:</h4>
                 <ul class="supported-actions">
-                    <li>Add Task: Creates a new task in JIRA with a user-specified summary.</li>
-                    <li>Update Task: Updates an existing task in JIRA with new summary, label, and description.</li>
-                    <li>Delete Task: Deletes a task from JIRA.</li>
-                    <li>Transition Task: Moves an existing task to a new workflow state (to-do, in progress, or done).</li>
+                    <li><b>Create Task:</b> Creates a new task in JIRA with a user-specified summary.</li>
+                    <li><b>Update Task:</b> Updates an existing task in JIRA with new summary, label, and description.</li>
+                    <li><b>Delete Task:</b> Deletes a task from JIRA.</li>
+                    <li><b>Transition Task:</b> Moves an existing task to a new workflow state (to-do, in progress, or done).</li>
                 </ul>
             </section>
 
             <section class="voice-commands">
                 <h4>Voice Commands:</h4>
                 <ul>
-                    <li>Add task with summary {'<'}your summary here{'>'}</li>
-                    <li>Update task with key {'<'}task key{'>'} and set summary {'<'}new summary{'>'} and set label {'<'}new label{'>'} and set description {'<'}new description{'>'}</li>
-                    <li>Delete task with key {'<'}task key{'>'}</li>
-                    <li>Transition task with key {'<'}task key{'>'} to {'<'}to do OR in progress OR done{'>'}</li>
+                    <li><b>Create Task:</b> <i>Add</i> task with summary {'<'}your summary here{'>'}</li>
+                    <li><b>Update Task:</b> <i>Update</i> task with key {'<'}task key{'>'} and set summary {'<'}new summary{'>'} and set label {'<'}new label{'>'} and set description {'<'}new description{'>'}</li>
+                    <li><b>Delete Task:</b> <i>Delete</i> task with key {'<'}task key{'>'}</li>
+                    <li><b>Transition Task:</b> <i>Transition</i> task with key {'<'}task key{'>'} to {'<'}to do OR in progress OR done{'>'}</li>
+                </ul>
+                <h4>Alternate Keywords:</h4>
+                <h6>The below keywords can be used in place of <i>Keywords</i> above as alternatives to perform the mentioned operations</h6>
+                <ul>
+                    <li><b>Create Task:</b> Create, Insert, Add, Implement, Generate, Compose, Form, Formulate, Setup</li>
+                    <li><b>Update Task:</b> Update, Set, Change, Alter, Modify, Edit, Correct, Make</li>
+                    <li><b>Delete Task:</b>  Delete, Remove, Scratch, Cross</li>
+                    <li><b>Transition Task:</b> Transition, Move</li>
                 </ul>
             </section>
         </div>
