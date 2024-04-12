@@ -22,6 +22,15 @@
 
 <p>In the meantime, if you have any questions, feel free to leave a comment below!</p>
 
+<h4>Preview of the Tool</h4>
+
+<table border="0">
+ <tr>
+    <td><img src="screenshots/Image 1.png" alt="project-screenshot" width="600" height="400/"></td>
+    <td><img src="screenshots/Image 3.png" alt="project-screenshot" width="600" height="400/"></td>
+ </tr>
+</table>
+
 
 <section class="how-to-use">
                 <h4>How to Use:</h4>
@@ -51,6 +60,8 @@
                 </ol>
             </section>
 
+
+<br><img src="screenshots/Image 2.png" alt="project-screenshot" width="400" height="600/"><br>
 <section class="how-to-use">
                 <h4>Supported Actions:</h4>
                 <ul class="supported-actions">
@@ -70,7 +81,7 @@
                     <li><b>Transition Task:</b> <i>Transition</i> task with key [task key] to [to do OR in progress OR done]</li>
                 </ul>
                 <h4>Alternate Keywords:</h4>
-                <h6>The below keywords can be used in place of <i>Keywords</i> above as alternatives to perform the mentioned operations</h6>
+                <p>The below keywords can be used in place of <i>Keywords</i> above as alternatives to perform the mentioned operations</p>
                 <ul>
                     <li><b>Create Task:</b> Create, Insert, Add, Implement, Generate, Compose, Form, Formulate, Setup</li>
                     <li><b>Update Task:</b> Update, Set, Change, Alter, Modify, Edit, Correct, Make</li>
