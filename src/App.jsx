@@ -47,7 +47,6 @@ function App() {
       setVolume(result.volume !== undefined ? result.volume : 50);
       setGlobalConfirm(result.taskConfirmationEnabled !== undefined ? result.taskConfirmationEnabled : true);
     });
-    console.log('global confirmation' + globalConfirm);
   }, []);
 
   const getEnvVars = () => {
@@ -77,7 +76,6 @@ function App() {
   useEffect(() => {
     getEnvVars();
     chrome.storage.sync.get(['cloudId', 'userId', 'apiToken'], (result) => {
-      console.log(result.userId);
       if (result.userId && result.apiToken && result.cloudId) {
         setShowMicrophone(true);
       }
@@ -92,7 +90,6 @@ function App() {
     
     //Extract Info and Set confirm flag if Global Confirm is true
     if(!valSet || !globalConfirm){
-      console.log('In Valset');
       if (keywordIndex >= 0 && keywordIndex <= 8) {
         summary = 'No Sumamry';
         const summaryIndex = transcript.indexOf("summary");
@@ -204,8 +201,6 @@ function App() {
         key = key.substring(-1, 3) + "-" + key.substring(4);
         setKey(key);
         setValset(true);
-        console.log('In Valset Under');
-        console.log(key1);
         if(globalConfirm){
           speak(`Are you sure you want to delete task with key ${key}`);
           setConfirmFlag(true);
@@ -214,44 +209,27 @@ function App() {
     }
 
     if(!globalConfirm){
-      console.log({valSet})
       setValset(!valSet);
-      // If confirmed or confirm is off
       if (keywordIndex >= 0 && keywordIndex <= 8) {
-        console.log('In add');
-        console.log(summary);
-        
         addTask(summary);
       } else if (keywordIndex > 8 && keywordIndex <= 16) {
-        console.log(key)
         updateTask(key,summary,description,label);
       } else if (keywordIndex > 16 && keywordIndex <= 18) {
-        console.log(key)
-        console.log(to)
         transitionTask(key,to);
       } else if (keywordIndex > 18) {
-        
-        console.log(key)
         deleteTask(key);
       }
     }
 
     if(globalConfirm && valSet && !confirmFlag){
-      console.log({valSet})
       setValset(!valSet);
-      // If confirmed or confirm is off
       if (keywordIndex >= 0 && keywordIndex <= 8) {
-        console.log('In add confirm');
-        console.log(summary1);
-        
         addTask(summary1);
       } else if (keywordIndex > 8 && keywordIndex <= 16) {
         updateTask(key1,summary1,description1,label1);
       } else if (keywordIndex > 16 && keywordIndex <= 18) {
         transitionTask(key1,toStage1);
       } else if (keywordIndex > 18) {
-        
-        console.log({key1})
         deleteTask(key1);
       }
     }
@@ -261,16 +239,13 @@ function App() {
   useEffect(() => {
     if(confirmFlag && globalConfirm){
       if (transcript.includes('yes')) {
-        console.log('In yess');
        setConfirmFlag(false);
        setFlag(!flag);
       } else if (transcript.includes('no')) {
-        console.log('In No');
         setConfirmFlag(false);
         setValset(!valSet);
         speak('Operation cancelled.');
       } else {
-        console.log('In Else');
         speak('Please say yes or no to confirm or cancel.');
       }
     } 
@@ -286,10 +261,8 @@ function App() {
     } else {
       if(!invalid){
         setInvalid(true);
-        console.log(invalid);
         speak('This was not a valid command, Please try again');
       } else {
-        console.log(invalid);
         speak('This was not a valid command, Please check the Help section for more information on valid commands');
       }
       
@@ -315,9 +288,6 @@ function App() {
          }
      }
   }`;
-  console.log("2a");
-  //await confirmation(1, summary);
-  console.log("under confirm");
     try {
       const response = await fetch(
         `https://api.atlassian.com/ex/jira/${cloudid}/rest/api/3/issue/`,

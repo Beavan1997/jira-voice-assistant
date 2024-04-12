@@ -2,13 +2,9 @@ import React, { useState, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
-// npm install bootstrap
 
 const Login = ({updateUserAndIsLoggedIn}) => {
 
-    // const [cloudId, setcloudId] = useState('');
-    // const [userId, setuserId] = useState(''); 
-    // const [apiToken, setapiToken] = useState('');
 
     const navigate = useNavigate();
 
@@ -32,7 +28,6 @@ const Login = ({updateUserAndIsLoggedIn}) => {
                 }
             );
             const data = await response.status;
-            console.log('anything');
             if (data === 401 || data === 403) {
                 setIncorrectCredentials = true;
                 areCredentialsCorrect = false;
@@ -40,11 +35,9 @@ const Login = ({updateUserAndIsLoggedIn}) => {
                 areCredentialsCorrect = true;
             }
         } catch (error) {
-            console.log('error');
             setIncorrectCredentials = true;
             areCredentialsCorrect = false;
         }
-        console.log(areCredentialsCorrect);
         return areCredentialsCorrect;
     };
 
@@ -52,7 +45,6 @@ const Login = ({updateUserAndIsLoggedIn}) => {
         let isUserLoggedIn = await checkCred(userIdRef.current.value, apiTokenRef.current.value, cloudIdRef.current.value);
         if (isUserLoggedIn) {
             e.preventDefault();
-            console.log(userIdRef.current.value + " " + apiTokenRef.current.value + " " + cloudIdRef.current.value);
             chrome.storage.sync.set({
                 'userId': userIdRef.current.value,
                 'apiToken': apiTokenRef.current.value,
@@ -60,7 +52,6 @@ const Login = ({updateUserAndIsLoggedIn}) => {
                 'isLoggedIn': true
             }, function () {
                 e.target.form.reset();
-                console.log('Options saved.');
             });
             navigate('/');
             () => updateUserAndIsLoggedIn(userIdRef.current.value, true);

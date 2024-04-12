@@ -16,8 +16,6 @@ const Settings = () => {
             setVolume(result.volume !== undefined ? result.volume : 50);
             setIsLoggedIn(result.isLoggedIn);
             setUserId(result.userId);
-            console.log('is logged in : ' + result.isLoggedIn),
-            console.log('user Id : ' +result.userId)
         });
     }, []);
 

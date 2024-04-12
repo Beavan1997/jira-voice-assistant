@@ -9,13 +9,14 @@ export default function Help() {
             <section class="how-to-use">
                 <h4>How to Use:</h4>
                 <ol>
-                    {/* <li>
-                        Install the Extension:
+                    {<li>
+                        Login in Using your JIRA credentials:
                         <ul>
-                            <li>Make sure the Chrome extension is installed and enabled in your Google Chrome browser.</li>
-                            <li>You can find the extension in the Chrome Web Store or through developer channels.</li>
+                            <li><b>User Id:</b> JIRA User Id</li>
+                            <li><b>API Token:</b> You JIRA API token. You can get information of how to generate your token <a href="https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/" target="_blank">here</a>.</li>
+                            <li><b>Cloud Id:</b> Your JIRA Project's Cloud Id. You can get the cloud Id by pasting this link in your https://{'<'}YOUR_DOMAIN{'>'}.atlassian.net/_edge/tenant_info</li>
                         </ul>
-                    </li> */}
+                    </li>}
                     <li>
                         Grant Permissions:
                         <ul>
