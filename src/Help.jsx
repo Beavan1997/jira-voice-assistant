@@ -10,7 +10,7 @@ export default function Help() {
                 <h4>How to Use:</h4>
                 <ol>
                     {<li>
-                        Login in Using your JIRA credentials:
+                        Login using your JIRA credentials in the Settings section:
                         <ul>
                             <li><b>User Id:</b> JIRA User Id</li>
                             <li><b>API Token:</b> You JIRA API token. You can get information of how to generate your token <a href="https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/" target="_blank">here</a>.</li>
@@ -38,7 +38,7 @@ export default function Help() {
                 <h4>Supported Actions:</h4>
                 <ul class="supported-actions">
                     <li><b>Create Task:</b> Creates a new task in JIRA with a user-specified summary.</li>
-                    <li><b>Update Task:</b> Updates an existing task in JIRA with new summary, label, and description.</li>
+                    <li><b>Update Task:</b> Updates an existing task in JIRA with a new summary, description and label.</li>
                     <li><b>Delete Task:</b> Deletes a task from JIRA.</li>
                     <li><b>Transition Task:</b> Moves an existing task to a new workflow state (to-do, in progress, or done).</li>
                 </ul>
@@ -48,7 +48,7 @@ export default function Help() {
                 <h4>Voice Commands:</h4>
                 <ul>
                     <li><b>Create Task:</b> <i>Add</i> task with summary {'<'}your summary here{'>'}</li>
-                    <li><b>Update Task:</b> <i>Update</i> task with key {'<'}task key{'>'} and set summary {'<'}new summary{'>'} and set label {'<'}new label{'>'} and set description {'<'}new description{'>'}</li>
+                    <li><b>Update Task:</b> <i>Update</i> task with key {'<'}task key{'>'} and set summary {'<'}your summary here{'>'} and set description {'<'}your description here{'>'} and set label {'<'}your label here{'>'}</li>
                     <li><b>Delete Task:</b> <i>Delete</i> task with key {'<'}task key{'>'}</li>
                     <li><b>Transition Task:</b> <i>Transition</i> task with key {'<'}task key{'>'} to {'<'}to do OR in progress OR done{'>'}</li>
                 </ul>

@@ -9,7 +9,7 @@
     },
     "permissions": ["activeTab", "scripting", "storage"],
     "content_scripts": [{
-      "matches": ["https://beavanjoemathias.atlassian.net/jira/*"],
+      "matches": ["https://*.atlassian.net/jira/*"],
       "js": ["contentScript.js"]
     }]
 }

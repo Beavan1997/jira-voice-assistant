@@ -91,7 +91,7 @@ function App() {
     //Extract Info and Set confirm flag if Global Confirm is true
     if(!valSet || !globalConfirm){
       if (keywordIndex >= 0 && keywordIndex <= 8) {
-        summary = 'No Sumamry';
+        summary = 'No Summary';
         const summaryIndex = transcript.indexOf("summary");
         if (summaryIndex !== -1) {
           summary = transcript.substring(summaryIndex + "summary".length + 1);
