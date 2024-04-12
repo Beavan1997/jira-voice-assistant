@@ -7,7 +7,7 @@
 
 <ul>
 <li><b>Effortlessly Add Tasks:</b>  Simply speak your task details, and the extension will create a new task in JIRA.</li>
-<li><b>Seamless Task Updates:</b> Need to modify an existing task? No problem! Use voice commands to update descriptions, assignees, or any other relevant details.</li>
+<li><b>Seamless Task Updates:</b> Need to modify an existing task? No problem! Use voice commands to update descriptions or any other relevant details.</li>
 <li><b>Effortless Task Deletion:</b>  Remove tasks that are no longer relevant with a simple voice command.</li>
 <li><b>Smooth Task Transition:</b>  Moving tasks between stages in your JIRA workflow is now a breeze – just use your voice to transition tasks!</li>
 </ul>
