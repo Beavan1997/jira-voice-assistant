@@ -22,6 +22,10 @@
 
 <p>In the meantime, if you have any questions, feel free to leave a comment below!</p>
 
+<h3>Teaser Video of the JIRA Voice Assistant</h3>
+
+[![Voice](https://img.youtube.com/vi/axsY4opiNqA/hqdefault.jpg)](https://youtu.be/axsY4opiNqA)
+
 <h4>Preview of the Tool</h4>
 
 <table border="0">
