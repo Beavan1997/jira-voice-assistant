@@ -16,7 +16,7 @@
 
 <p>This extension is perfect for busy professionals who want to save time and effort managing their JIRA tasks. With voice commands, you can stay focused and get things done without ever needing to switch between windows or applications.</p>
 
-<b><a href=https://chromewebstore.google.com/detail/jira-voice-assistant/pmkkodnnklbefedoioocpgnccmnibfni>Available Chrome Web Store!<a></b>
+<b><a href=https://chromewebstore.google.com/detail/jira-voice-assistant/pmkkodnnklbefedoioocpgnccmnibfni>Available on the Chrome Web Store!<a></b>
 
 <h3>Teaser Video of the JIRA Voice Assistant</h3>
 
