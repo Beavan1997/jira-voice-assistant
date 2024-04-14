@@ -18,10 +18,6 @@
 
 <b><a href=https://chromewebstore.google.com/detail/jira-voice-assistant/pmkkodnnklbefedoioocpgnccmnibfni>Available Chrome Web Store!<a></b>
 
-<p>Stay tuned for the launch of the JIRA Voice Command extension on the Google Chrome Extensions page. We'll keep you updated!</p>
-
-<p>In the meantime, if you have any questions, feel free to leave a comment below!</p>
-
 <h3>Teaser Video of the JIRA Voice Assistant</h3>
 
 [![Voice](https://img.youtube.com/vi/axsY4opiNqA/hqdefault.jpg)](https://youtu.be/axsY4opiNqA)
